@@ -23,7 +23,7 @@ library OracleGuard {
         bool checkSequencer;
     }
 
-    // L2 sequencer feeds report uptime with a positive answer; a zero answer
+    // L2 sequencer feeds report uptime with a positive answer, a zero answer
     // means the sequencer was down at that round. New feeds need a grace
     // period before prices are trusted.
     uint256 internal constant SEQ_GRACE_PERIOD = 1 hours;

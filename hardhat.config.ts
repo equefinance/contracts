@@ -1,11 +1,13 @@
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
-import { configVariable, defineConfig } from "hardhat/config";
 import hardhatTypechain from "@nomicfoundation/hardhat-typechain";
+import hardhatSlangSolx from "@nomicfoundation/hardhat-slang-solx";
+import { configVariable, defineConfig } from "hardhat/config";
 
 export default defineConfig({
   plugins: [
     hardhatToolboxViemPlugin,
-    hardhatTypechain
+    hardhatTypechain,
+    hardhatSlangSolx,
   ],
   solidity: {
     profiles: {
@@ -20,6 +22,17 @@ export default defineConfig({
             runs: 200,
           },
         },
+      },
+      "slang-solx": {
+        type: "slang-solx",
+        version: "0.8.34",
+        settings: {
+          optimizer: {
+            enabled: true,
+            mode: "3",
+          }
+        },
+        dangerouslyAllowSlangSolxInProduction: true,
       },
     },
   },

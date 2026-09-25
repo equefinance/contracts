@@ -3,4 +3,6 @@
 /* eslint-disable */
 export * as interfaces from './interfaces/index.js';
 export * as libraries from './libraries/index.js';
+export * as mocks from './mocks/index.js';
+export * as oracle from './oracle/index.js';
 export * as utils from './utils/index.js';
