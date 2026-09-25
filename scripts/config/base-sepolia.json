@@ -1,0 +1,70 @@
+{
+  "chainId": 84532,
+  "vaults": [
+    {
+      "symbol": "eTSLA",
+      "shareTokenName": "Eque TSLA",
+      "underlying": {
+        "symbol": "TSLAc",
+        "name": "Tesla Inc. Tokenized Stock",
+        "decimals": 18
+      },
+      "underlyingSource": "MockB20",
+      "oracle": {
+        "decimals": 8,
+        "initialPrice": "40000000000",
+        "heartbeatSec": 3600,
+        "stalenessBufferSec": 300
+      },
+      "strikeBps": 10500,
+      "floorBps": 120,
+      "epochDurationSec": 600,
+      "auctionWindowSec": 300,
+      "antiSnipeExtensionSec": 60,
+      "premiumSanityCapBps": 500,
+      "tvlCap": "1000000000000000000000",
+      "strategyCaps": {
+        "epoch": 9000,
+        "lending": 5000
+      },
+      "routerTargetWeights": {
+        "epoch": 7000,
+        "lending": 3000
+      },
+      "lendingStrategy": "MockLendingStrategy"
+    },
+    {
+      "symbol": "eMETA",
+      "shareTokenName": "Eque META",
+      "underlying": {
+        "symbol": "METAc",
+        "name": "Meta Platforms Inc. Tokenized Stock",
+        "decimals": 18
+      },
+      "underlyingSource": "MockB20",
+      "oracle": {
+        "decimals": 8,
+        "initialPrice": "70000000000",
+        "heartbeatSec": 3600,
+        "stalenessBufferSec": 300
+      },
+      "strikeBps": 10500,
+      "floorBps": 120,
+      "epochDurationSec": 600,
+      "auctionWindowSec": 300,
+      "antiSnipeExtensionSec": 60,
+      "premiumSanityCapBps": 500,
+      "tvlCap": "1000000000000000000000",
+      "strategyCaps": {
+        "epoch": 9000,
+        "lending": 5000
+      },
+      "routerTargetWeights": {
+        "epoch": 7000,
+        "lending": 3000
+      },
+      "lendingStrategy": "MockLendingStrategy"
+    }
+  ],
+  "lendingStrategyFallback": "MockLendingStrategy"
+}
