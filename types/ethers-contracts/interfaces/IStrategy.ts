@@ -83,7 +83,7 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
     withdraw: TypedContractMethod<
       [assets: BigNumberish, ],
-      [void],
+      [bigint],
       'nonpayable'
     >
     
@@ -108,7 +108,7 @@ getFunction(nameOrSignature: 'totalAssets'): TypedContractMethod<
     >;
 getFunction(nameOrSignature: 'withdraw'): TypedContractMethod<
       [assets: BigNumberish, ],
-      [void],
+      [bigint],
       'nonpayable'
     >;
 

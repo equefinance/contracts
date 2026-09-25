@@ -237,11 +237,6 @@ import type { NonPayableOverrides } from "../../common.js"
     "type": "error"
   },
   {
-    "inputs": [],
-    "name": "RedeemRequestPending",
-    "type": "error"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -249,7 +244,12 @@ import type { NonPayableOverrides } from "../../common.js"
         "type": "uint256"
       }
     ],
-    "name": "RequestTooFresh",
+    "name": "RedeemNotReady",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RedeemRequestPending",
     "type": "error"
   },
   {
@@ -321,7 +321,7 @@ import type { NonPayableOverrides } from "../../common.js"
   }
 ] as const;
 
-  const _bytecode = "0x604051600b810163000000639182630000003e833981515f1a60730360275730905260738153f35b505050634e487b7160e01b5f525f60045260245ffdfe730000000000000000000000000000000000000000505f5ffdfea2646970667358221220493c362a60f96092c42b0d224990c7ecc5b08403d7988102e663124d0e97e95064736f6c637816736f6c783a302e312e383b736f6c633a302e382e33340047";
+  const _bytecode = "0x608060405234601d57600e6021565b603e602c823930815050603e90f35b6027565b60405190565b5f80fdfe60806040525f80fdfea2646970667358221220f964459aac1912ad9fa436436fa57454ff765a6065e37992c8c5b5dc0f3c29b564736f6c63430008220033";
 
   
       type ErrorsConstructorParams = [signer?: Signer] | ConstructorParameters<typeof ContractFactory>;

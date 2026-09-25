@@ -5,32 +5,52 @@ import type { BaseContract, BigNumberish, BytesLike, FunctionFragment, Result, I
 import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, TypedLogDescription, TypedListener, TypedContractMethod } from "../common.js"
   
 
-  export interface IEqueRouterInterface extends Interface {
-    getFunction(nameOrSignature: "nextEpochBoundary" | "planAllocation" | "rebalance" | "registerStrategy" | "setToleranceBps" | "setWeights" | "strategyAssets" | "strategyHoldings" | "strategyLocked" | "toleranceBps" | "weights"): FunctionFragment;
+  export interface EqueRouterInterface extends Interface {
+    getFunction(nameOrSignature: "CURATOR_ROLE" | "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "KEEPER_ROLE" | "getRoleAdmin" | "grantRole" | "hasRole" | "nextEpochBoundary" | "planAllocation" | "rebalance" | "registerStrategy" | "renounceRole" | "revokeRole" | "setToleranceBps" | "setWeights" | "strategyAssets" | "strategyHoldings" | "strategyLocked" | "supportsInterface" | "toleranceBps" | "weights"): FunctionFragment;
 
-    getEvent(nameOrSignatureOrTopic: "Rebalanced" | "StrategyRegistered" | "WeightsSet"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Rebalanced" | "RoleAdminChanged" | "RoleGranted" | "RoleRevoked" | "StrategyRegistered" | "WeightsSet"): EventFragment;
 
-    encodeFunctionData(functionFragment: 'nextEpochBoundary', values: [AddressLike]): string;
+    encodeFunctionData(functionFragment: 'CURATOR_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'DEFAULT_ADMIN_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'GUARDIAN_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'KEEPER_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'getRoleAdmin', values: [BytesLike]): string;
+encodeFunctionData(functionFragment: 'grantRole', values: [BytesLike, AddressLike]): string;
+encodeFunctionData(functionFragment: 'hasRole', values: [BytesLike, AddressLike]): string;
+encodeFunctionData(functionFragment: 'nextEpochBoundary', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'planAllocation', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'rebalance', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'registerStrategy', values: [AddressLike, AddressLike, BigNumberish]): string;
+encodeFunctionData(functionFragment: 'renounceRole', values: [BytesLike, AddressLike]): string;
+encodeFunctionData(functionFragment: 'revokeRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'setToleranceBps', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'setWeights', values: [AddressLike, BigNumberish, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'strategyAssets', values: [AddressLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'strategyHoldings', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'strategyLocked', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string;
 encodeFunctionData(functionFragment: 'toleranceBps', values?: undefined): string;
 encodeFunctionData(functionFragment: 'weights', values: [AddressLike]): string;
 
-    decodeFunctionResult(functionFragment: 'nextEpochBoundary', data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'CURATOR_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'DEFAULT_ADMIN_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'GUARDIAN_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'KEEPER_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'getRoleAdmin', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'grantRole', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'hasRole', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'nextEpochBoundary', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'planAllocation', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'rebalance', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'registerStrategy', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'renounceRole', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'revokeRole', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'setToleranceBps', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'setWeights', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'strategyAssets', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'strategyHoldings', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'strategyLocked', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'toleranceBps', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'weights', data: BytesLike): Result;
   }
@@ -40,6 +60,42 @@ decodeFunctionResult(functionFragment: 'weights', data: BytesLike): Result;
       export type InputTuple = [vault: AddressLike, epochAssets: BigNumberish, lendingAssets: BigNumberish];
       export type OutputTuple = [vault: string, epochAssets: bigint, lendingAssets: bigint];
       export interface OutputObject {vault: string, epochAssets: bigint, lendingAssets: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace RoleAdminChangedEvent {
+      export type InputTuple = [role: BytesLike, previousAdminRole: BytesLike, newAdminRole: BytesLike];
+      export type OutputTuple = [role: string, previousAdminRole: string, newAdminRole: string];
+      export interface OutputObject {role: string, previousAdminRole: string, newAdminRole: string };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace RoleGrantedEvent {
+      export type InputTuple = [role: BytesLike, account: AddressLike, sender: AddressLike];
+      export type OutputTuple = [role: string, account: string, sender: string];
+      export interface OutputObject {role: string, account: string, sender: string };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace RoleRevokedEvent {
+      export type InputTuple = [role: BytesLike, account: AddressLike, sender: AddressLike];
+      export type OutputTuple = [role: string, account: string, sender: string];
+      export interface OutputObject {role: string, account: string, sender: string };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -72,12 +128,12 @@ decodeFunctionResult(functionFragment: 'weights', data: BytesLike): Result;
 
   
 
-  export interface IEqueRouter extends BaseContract {
+  export interface EqueRouter extends BaseContract {
     
-    connect(runner?: ContractRunner | null): IEqueRouter;
+    connect(runner?: ContractRunner | null): EqueRouter;
     waitForDeployment(): Promise<this>;
 
-    interface: IEqueRouterInterface;
+    interface: EqueRouterInterface;
 
     
   queryFilter<TCEvent extends TypedContractEvent>(
@@ -105,6 +161,62 @@ decodeFunctionResult(functionFragment: 'weights', data: BytesLike): Result;
 
 
     
+    
+    CURATOR_ROLE: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
+    DEFAULT_ADMIN_ROLE: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
+    GUARDIAN_ROLE: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
+    KEEPER_ROLE: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
+    getRoleAdmin: TypedContractMethod<
+      [role: BytesLike, ],
+      [string],
+      'view'
+    >
+    
+
+    
+    grantRole: TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    hasRole: TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
+      [boolean],
+      'view'
+    >
+    
+
     
     nextEpochBoundary: TypedContractMethod<
       [vault: AddressLike, ],
@@ -138,6 +250,22 @@ decodeFunctionResult(functionFragment: 'weights', data: BytesLike): Result;
     
 
     
+    renounceRole: TypedContractMethod<
+      [role: BytesLike, callerConfirmation: AddressLike, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    revokeRole: TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
     setToleranceBps: TypedContractMethod<
       [bps: BigNumberish, ],
       [void],
@@ -164,7 +292,7 @@ decodeFunctionResult(functionFragment: 'weights', data: BytesLike): Result;
     
     strategyHoldings: TypedContractMethod<
       [vault: AddressLike, ],
-      [[string[], bigint[]] & {strategies: string[], holdings: bigint[] }],
+      [[string[], bigint[]]],
       'view'
     >
     
@@ -173,6 +301,14 @@ decodeFunctionResult(functionFragment: 'weights', data: BytesLike): Result;
     strategyLocked: TypedContractMethod<
       [vault: AddressLike, ],
       [bigint],
+      'view'
+    >
+    
+
+    
+    supportsInterface: TypedContractMethod<
+      [interfaceId: BytesLike, ],
+      [boolean],
       'view'
     >
     
@@ -196,7 +332,42 @@ decodeFunctionResult(functionFragment: 'weights', data: BytesLike): Result;
 
     getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
 
-    getFunction(nameOrSignature: 'nextEpochBoundary'): TypedContractMethod<
+    getFunction(nameOrSignature: 'CURATOR_ROLE'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'DEFAULT_ADMIN_ROLE'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'GUARDIAN_ROLE'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'KEEPER_ROLE'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'getRoleAdmin'): TypedContractMethod<
+      [role: BytesLike, ],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'grantRole'): TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'hasRole'): TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
+      [boolean],
+      'view'
+    >;
+getFunction(nameOrSignature: 'nextEpochBoundary'): TypedContractMethod<
       [vault: AddressLike, ],
       [bigint],
       'view'
@@ -213,6 +384,16 @@ getFunction(nameOrSignature: 'rebalance'): TypedContractMethod<
     >;
 getFunction(nameOrSignature: 'registerStrategy'): TypedContractMethod<
       [vault: AddressLike, strategy: AddressLike, capBps: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'renounceRole'): TypedContractMethod<
+      [role: BytesLike, callerConfirmation: AddressLike, ],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'revokeRole'): TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
       [void],
       'nonpayable'
     >;
@@ -233,12 +414,17 @@ getFunction(nameOrSignature: 'strategyAssets'): TypedContractMethod<
     >;
 getFunction(nameOrSignature: 'strategyHoldings'): TypedContractMethod<
       [vault: AddressLike, ],
-      [[string[], bigint[]] & {strategies: string[], holdings: bigint[] }],
+      [[string[], bigint[]]],
       'view'
     >;
 getFunction(nameOrSignature: 'strategyLocked'): TypedContractMethod<
       [vault: AddressLike, ],
       [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'supportsInterface'): TypedContractMethod<
+      [interfaceId: BytesLike, ],
+      [boolean],
       'view'
     >;
 getFunction(nameOrSignature: 'toleranceBps'): TypedContractMethod<
@@ -253,6 +439,9 @@ getFunction(nameOrSignature: 'weights'): TypedContractMethod<
     >;
 
     getEvent(key: 'Rebalanced'): TypedContractEvent<RebalancedEvent.InputTuple, RebalancedEvent.OutputTuple, RebalancedEvent.OutputObject>;
+getEvent(key: 'RoleAdminChanged'): TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
+getEvent(key: 'RoleGranted'): TypedContractEvent<RoleGrantedEvent.InputTuple, RoleGrantedEvent.OutputTuple, RoleGrantedEvent.OutputObject>;
+getEvent(key: 'RoleRevoked'): TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
 getEvent(key: 'StrategyRegistered'): TypedContractEvent<StrategyRegisteredEvent.InputTuple, StrategyRegisteredEvent.OutputTuple, StrategyRegisteredEvent.OutputObject>;
 getEvent(key: 'WeightsSet'): TypedContractEvent<WeightsSetEvent.InputTuple, WeightsSetEvent.OutputTuple, WeightsSetEvent.OutputObject>;
 
@@ -260,6 +449,18 @@ getEvent(key: 'WeightsSet'): TypedContractEvent<WeightsSetEvent.InputTuple, Weig
       
       'Rebalanced(address,uint256,uint256)': TypedContractEvent<RebalancedEvent.InputTuple, RebalancedEvent.OutputTuple, RebalancedEvent.OutputObject>;
       Rebalanced: TypedContractEvent<RebalancedEvent.InputTuple, RebalancedEvent.OutputTuple, RebalancedEvent.OutputObject>;
+    
+
+      'RoleAdminChanged(bytes32,bytes32,bytes32)': TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
+      RoleAdminChanged: TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
+    
+
+      'RoleGranted(bytes32,address,address)': TypedContractEvent<RoleGrantedEvent.InputTuple, RoleGrantedEvent.OutputTuple, RoleGrantedEvent.OutputObject>;
+      RoleGranted: TypedContractEvent<RoleGrantedEvent.InputTuple, RoleGrantedEvent.OutputTuple, RoleGrantedEvent.OutputObject>;
+    
+
+      'RoleRevoked(bytes32,address,address)': TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
+      RoleRevoked: TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
     
 
       'StrategyRegistered(address,address,uint256)': TypedContractEvent<StrategyRegisteredEvent.InputTuple, StrategyRegisteredEvent.OutputTuple, StrategyRegisteredEvent.OutputObject>;

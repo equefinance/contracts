@@ -152,6 +152,25 @@
         "type": "address"
       }
     ],
+    "name": "nextEpochBoundary",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "vault",
+        "type": "address"
+      }
+    ],
     "name": "planAllocation",
     "outputs": [
       {
@@ -254,6 +273,49 @@
       }
     ],
     "name": "strategyAssets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "vault",
+        "type": "address"
+      }
+    ],
+    "name": "strategyHoldings",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "strategies",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "holdings",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "vault",
+        "type": "address"
+      }
+    ],
+    "name": "strategyLocked",
     "outputs": [
       {
         "internalType": "uint256",

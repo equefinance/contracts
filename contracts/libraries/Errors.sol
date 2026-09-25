@@ -44,5 +44,5 @@ library Errors {
     error FeeHookMisconfigured();
     error RedeemRequestPending();
     error NoRedeemRequest();
-    error RequestTooFresh(uint256 readyAt);
+    error RedeemNotReady(uint256 readyAt);
 }

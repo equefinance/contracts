@@ -8,6 +8,10 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 /// grant and revocation have one accountable owner. Parameter delays such as
 /// curator timelocks live in the consuming contracts, not in access control.
 contract EqueAccess is AccessControl {
+    error NotCurator();
+    error NotKeeper();
+    error NotGuardian();
+
     bytes32 public constant CURATOR_ROLE = keccak256("CURATOR_ROLE");
     bytes32 public constant KEEPER_ROLE = keccak256("KEEPER_ROLE");
     bytes32 public constant GUARDIAN_ROLE = keccak256("GUARDIAN_ROLE");
@@ -15,6 +19,21 @@ contract EqueAccess is AccessControl {
     constructor(address admin) {
         if (admin == address(0)) _revertZeroAddress();
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
+    }
+
+    modifier onlyCurator() {
+        if (!hasRole(CURATOR_ROLE, msg.sender)) revert NotCurator();
+        _;
+    }
+
+    modifier onlyKeeper() {
+        if (!hasRole(KEEPER_ROLE, msg.sender)) revert NotKeeper();
+        _;
+    }
+
+    modifier onlyGuardian() {
+        if (!hasRole(GUARDIAN_ROLE, msg.sender)) revert NotGuardian();
+        _;
     }
 
     function _revertZeroAddress() private pure {

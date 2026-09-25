@@ -10,54 +10,66 @@ import * as Contracts from "./index.js";
 
 declare module "@nomicfoundation/hardhat-ethers/types" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
-  getContractFactory(name: 'EpochMath', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EpochMath__factory>
-getContractFactory(name: 'Errors', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.Errors__factory>
+  getContractFactory(name: 'EqueRouter', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EqueRouter__factory>
+getContractFactory(name: 'EqueVault', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EqueVault__factory>
+getContractFactory(name: 'EqueVaultFactory', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EqueVaultFactory__factory>
 getContractFactory(name: 'IEqueRouter', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.IEqueRouter__factory>
-getContractFactory(name: 'IEpochStrategy', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.IEpochStrategy__factory>
-getContractFactory(name: 'IEqueVault', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.IEqueVault__factory>
+getContractFactory(name: 'EpochMath', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EpochMath__factory>
 getContractFactory(name: 'IStrategy', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.IStrategy__factory>
+getContractFactory(name: 'Errors', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.Errors__factory>
 getContractFactory(name: 'MockB20', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MockB20__factory>
+getContractFactory(name: 'IEqueVault', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.IEqueVault__factory>
 getContractFactory(name: 'MockStocks', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MockStocks__factory>
 getContractFactory(name: 'TestnetFaucet', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.TestnetFaucet__factory>
+getContractFactory(name: 'IEpochStrategy', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.IEpochStrategy__factory>
 getContractFactory(name: 'MockSequencerFeed', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MockSequencerFeed__factory>
 getContractFactory(name: 'MockV3Aggregator', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MockV3Aggregator__factory>
 getContractFactory(name: 'EqueAccess', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EqueAccess__factory>
 
-  getContractAt(name: 'EpochMath', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EpochMath>
-getContractAt(name: 'Errors', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.Errors>
+  getContractAt(name: 'EqueRouter', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EqueRouter>
+getContractAt(name: 'EqueVault', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EqueVault>
+getContractAt(name: 'EqueVaultFactory', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EqueVaultFactory>
 getContractAt(name: 'IEqueRouter', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.IEqueRouter>
-getContractAt(name: 'IEpochStrategy', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.IEpochStrategy>
-getContractAt(name: 'IEqueVault', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.IEqueVault>
+getContractAt(name: 'EpochMath', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EpochMath>
 getContractAt(name: 'IStrategy', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.IStrategy>
+getContractAt(name: 'Errors', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.Errors>
 getContractAt(name: 'MockB20', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MockB20>
+getContractAt(name: 'IEqueVault', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.IEqueVault>
 getContractAt(name: 'MockStocks', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MockStocks>
 getContractAt(name: 'TestnetFaucet', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.TestnetFaucet>
+getContractAt(name: 'IEpochStrategy', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.IEpochStrategy>
 getContractAt(name: 'MockSequencerFeed', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MockSequencerFeed>
 getContractAt(name: 'MockV3Aggregator', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MockV3Aggregator>
 getContractAt(name: 'EqueAccess', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EqueAccess>
 
-  deployContract(name: 'EpochMath', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EpochMath>
-deployContract(name: 'Errors', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Errors>
+  deployContract(name: 'EqueRouter', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EqueRouter>
+deployContract(name: 'EqueVault', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EqueVault>
+deployContract(name: 'EqueVaultFactory', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EqueVaultFactory>
 deployContract(name: 'IEqueRouter', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEqueRouter>
-deployContract(name: 'IEpochStrategy', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEpochStrategy>
-deployContract(name: 'IEqueVault', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEqueVault>
+deployContract(name: 'EpochMath', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EpochMath>
 deployContract(name: 'IStrategy', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IStrategy>
+deployContract(name: 'Errors', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Errors>
 deployContract(name: 'MockB20', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockB20>
+deployContract(name: 'IEqueVault', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEqueVault>
 deployContract(name: 'MockStocks', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockStocks>
 deployContract(name: 'TestnetFaucet', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.TestnetFaucet>
+deployContract(name: 'IEpochStrategy', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEpochStrategy>
 deployContract(name: 'MockSequencerFeed', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockSequencerFeed>
 deployContract(name: 'MockV3Aggregator', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockV3Aggregator>
 deployContract(name: 'EqueAccess', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EqueAccess>
 
-  deployContract(name: 'EpochMath', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EpochMath>
-deployContract(name: 'Errors', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Errors>
+  deployContract(name: 'EqueRouter', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EqueRouter>
+deployContract(name: 'EqueVault', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EqueVault>
+deployContract(name: 'EqueVaultFactory', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EqueVaultFactory>
 deployContract(name: 'IEqueRouter', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEqueRouter>
-deployContract(name: 'IEpochStrategy', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEpochStrategy>
-deployContract(name: 'IEqueVault', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEqueVault>
+deployContract(name: 'EpochMath', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EpochMath>
 deployContract(name: 'IStrategy', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IStrategy>
+deployContract(name: 'Errors', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Errors>
 deployContract(name: 'MockB20', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockB20>
+deployContract(name: 'IEqueVault', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEqueVault>
 deployContract(name: 'MockStocks', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockStocks>
 deployContract(name: 'TestnetFaucet', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.TestnetFaucet>
+deployContract(name: 'IEpochStrategy', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEpochStrategy>
 deployContract(name: 'MockSequencerFeed', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockSequencerFeed>
 deployContract(name: 'MockV3Aggregator', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockV3Aggregator>
 deployContract(name: 'EqueAccess', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EqueAccess>

@@ -29,6 +29,16 @@ interface IEqueRouter {
 
     function strategyAssets(address vault, address strategy) external view returns (uint256);
 
+    /// Holdings per registered strategy, in the same order as the returned
+    /// strategy list. The vault reads this for its free/locked split.
+    function strategyHoldings(address vault) external view returns (address[] memory strategies, uint256[] memory holdings);
+
+    /// Total locked collateral reported by the vault's epoch strategies.
+    function strategyLocked(address vault) external view returns (uint256);
+
+    /// Next epoch boundary timestamp for the vault, used to time redeem claims.
+    function nextEpochBoundary(address vault) external view returns (uint256);
+
     /// Deterministic split of the vault's free assets across registered
     /// strategies, respecting caps. No state change; the vault calls this at
     /// epoch boundaries and the router returns the plan.

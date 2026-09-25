@@ -48,6 +48,19 @@
         "type": "uint256"
       }
     ],
+    "name": "Allocated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "assets",
+        "type": "uint256"
+      }
+    ],
     "name": "Allocating",
     "type": "event"
   },

@@ -10,7 +10,8 @@ interface IStrategy {
 
     function allocate(uint256 assets) external;
 
-    function withdraw(uint256 assets) external;
+    /// Returns the amount actually withdrawn, which may be less than requested.
+    function withdraw(uint256 assets) external returns (uint256);
 
     function harvest() external;
 }

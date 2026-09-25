@@ -5,12 +5,16 @@ import type { BaseContract, BigNumberish, BytesLike, FunctionFragment, Result, I
 import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, TypedLogDescription, TypedListener, TypedContractMethod } from "../common.js"
   
 
-  export interface IEqueVaultInterface extends Interface {
-    getFunction(nameOrSignature: "allocate" | "allowance" | "approve" | "asset" | "balanceOf" | "cap" | "claim" | "convertToAssets" | "convertToShares" | "decimals" | "deposit" | "freeAssets" | "lockedAssets" | "maxDeposit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "redeem" | "redeemPending" | "redeemReadyAt" | "requestRedeem" | "router" | "setCap" | "symbol" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "withdraw"): FunctionFragment;
+  export interface EqueVaultInterface extends Interface {
+    getFunction(nameOrSignature: "CURATOR_ROLE" | "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "KEEPER_ROLE" | "allocate" | "allowance" | "approve" | "asset" | "balanceOf" | "cap" | "claim" | "convertToAssets" | "convertToShares" | "decimals" | "deposit" | "depositFeeBps" | "feeRecipient" | "freeAssets" | "getRoleAdmin" | "grantRole" | "hasRole" | "initialize" | "lockedAssets" | "maxDeposit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "redeem" | "redeemPending" | "redeemReadyAt" | "renounceRole" | "requestRedeem" | "revokeRole" | "router" | "router_" | "setCap" | "setFeeRecipient" | "setFees" | "supportsInterface" | "symbol" | "syncAssets" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "withdraw" | "withdrawFeeBps"): FunctionFragment;
 
-    getEvent(nameOrSignatureOrTopic: "Allocated" | "Allocating" | "Approval" | "CapSet" | "Deposit" | "EpochBoundary" | "RedeemClaimed" | "RedeemRequested" | "Transfer" | "Withdraw"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Allocated" | "Allocating" | "Approval" | "CapSet" | "Deposit" | "EpochBoundary" | "FeeRecipientSet" | "FeesSet" | "Initialized" | "Paused" | "RedeemClaimed" | "RedeemRequested" | "RoleAdminChanged" | "RoleGranted" | "RoleRevoked" | "Transfer" | "Unpaused" | "Withdraw"): EventFragment;
 
-    encodeFunctionData(functionFragment: 'allocate', values?: undefined): string;
+    encodeFunctionData(functionFragment: 'CURATOR_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'DEFAULT_ADMIN_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'GUARDIAN_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'KEEPER_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'allocate', values?: undefined): string;
 encodeFunctionData(functionFragment: 'allowance', values: [AddressLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'approve', values: [AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'asset', values?: undefined): string;
@@ -21,7 +25,13 @@ encodeFunctionData(functionFragment: 'convertToAssets', values: [BigNumberish]):
 encodeFunctionData(functionFragment: 'convertToShares', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'decimals', values?: undefined): string;
 encodeFunctionData(functionFragment: 'deposit', values: [BigNumberish, AddressLike]): string;
+encodeFunctionData(functionFragment: 'depositFeeBps', values?: undefined): string;
+encodeFunctionData(functionFragment: 'feeRecipient', values?: undefined): string;
 encodeFunctionData(functionFragment: 'freeAssets', values?: undefined): string;
+encodeFunctionData(functionFragment: 'getRoleAdmin', values: [BytesLike]): string;
+encodeFunctionData(functionFragment: 'grantRole', values: [BytesLike, AddressLike]): string;
+encodeFunctionData(functionFragment: 'hasRole', values: [BytesLike, AddressLike]): string;
+encodeFunctionData(functionFragment: 'initialize', values: [AddressLike, string, string, AddressLike, AddressLike, BigNumberish, AddressLike, BigNumberish, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'lockedAssets', values?: undefined): string;
 encodeFunctionData(functionFragment: 'maxDeposit', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'maxMint', values: [AddressLike]): string;
@@ -29,6 +39,8 @@ encodeFunctionData(functionFragment: 'maxRedeem', values: [AddressLike]): string
 encodeFunctionData(functionFragment: 'maxWithdraw', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'mint', values: [BigNumberish, AddressLike]): string;
 encodeFunctionData(functionFragment: 'name', values?: undefined): string;
+encodeFunctionData(functionFragment: 'pause', values?: undefined): string;
+encodeFunctionData(functionFragment: 'paused', values?: undefined): string;
 encodeFunctionData(functionFragment: 'previewDeposit', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'previewMint', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'previewRedeem', values: [BigNumberish]): string;
@@ -36,17 +48,30 @@ encodeFunctionData(functionFragment: 'previewWithdraw', values: [BigNumberish]):
 encodeFunctionData(functionFragment: 'redeem', values: [BigNumberish, AddressLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'redeemPending', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'redeemReadyAt', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'renounceRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'requestRedeem', values: [BigNumberish]): string;
+encodeFunctionData(functionFragment: 'revokeRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'router', values?: undefined): string;
+encodeFunctionData(functionFragment: 'router_', values?: undefined): string;
 encodeFunctionData(functionFragment: 'setCap', values: [BigNumberish]): string;
+encodeFunctionData(functionFragment: 'setFeeRecipient', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'setFees', values: [BigNumberish, BigNumberish]): string;
+encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string;
 encodeFunctionData(functionFragment: 'symbol', values?: undefined): string;
+encodeFunctionData(functionFragment: 'syncAssets', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'totalAssets', values?: undefined): string;
 encodeFunctionData(functionFragment: 'totalSupply', values?: undefined): string;
 encodeFunctionData(functionFragment: 'transfer', values: [AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'transferFrom', values: [AddressLike, AddressLike, BigNumberish]): string;
+encodeFunctionData(functionFragment: 'unpause', values?: undefined): string;
 encodeFunctionData(functionFragment: 'withdraw', values: [BigNumberish, AddressLike, AddressLike]): string;
+encodeFunctionData(functionFragment: 'withdrawFeeBps', values?: undefined): string;
 
-    decodeFunctionResult(functionFragment: 'allocate', data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'CURATOR_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'DEFAULT_ADMIN_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'GUARDIAN_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'KEEPER_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'allocate', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'allowance', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'asset', data: BytesLike): Result;
@@ -57,7 +82,13 @@ decodeFunctionResult(functionFragment: 'convertToAssets', data: BytesLike): Resu
 decodeFunctionResult(functionFragment: 'convertToShares', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'decimals', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'deposit', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'depositFeeBps', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'feeRecipient', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'freeAssets', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'getRoleAdmin', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'grantRole', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'hasRole', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'lockedAssets', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'maxDeposit', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'maxMint', data: BytesLike): Result;
@@ -65,6 +96,8 @@ decodeFunctionResult(functionFragment: 'maxRedeem', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'maxWithdraw', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'mint', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'previewDeposit', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'previewMint', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'previewRedeem', data: BytesLike): Result;
@@ -72,15 +105,24 @@ decodeFunctionResult(functionFragment: 'previewWithdraw', data: BytesLike): Resu
 decodeFunctionResult(functionFragment: 'redeem', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'redeemPending', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'redeemReadyAt', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'renounceRole', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'requestRedeem', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'revokeRole', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'router', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'router_', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'setCap', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'setFeeRecipient', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'setFees', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'syncAssets', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'totalAssets', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'totalSupply', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'transfer', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'transferFrom', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'withdrawFeeBps', data: BytesLike): Result;
   }
 
   
@@ -156,6 +198,54 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
 
   
 
+    export namespace FeeRecipientSetEvent {
+      export type InputTuple = [recipient: AddressLike];
+      export type OutputTuple = [recipient: string];
+      export interface OutputObject {recipient: string };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace FeesSetEvent {
+      export type InputTuple = [depositBps: BigNumberish, withdrawBps: BigNumberish];
+      export type OutputTuple = [depositBps: bigint, withdrawBps: bigint];
+      export interface OutputObject {depositBps: bigint, withdrawBps: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace InitializedEvent {
+      export type InputTuple = [version: BigNumberish];
+      export type OutputTuple = [version: bigint];
+      export interface OutputObject {version: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace PausedEvent {
+      export type InputTuple = [account: AddressLike];
+      export type OutputTuple = [account: string];
+      export interface OutputObject {account: string };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
     export namespace RedeemClaimedEvent {
       export type InputTuple = [owner: AddressLike, assets: BigNumberish];
       export type OutputTuple = [owner: string, assets: bigint];
@@ -180,10 +270,58 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
 
   
 
+    export namespace RoleAdminChangedEvent {
+      export type InputTuple = [role: BytesLike, previousAdminRole: BytesLike, newAdminRole: BytesLike];
+      export type OutputTuple = [role: string, previousAdminRole: string, newAdminRole: string];
+      export interface OutputObject {role: string, previousAdminRole: string, newAdminRole: string };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace RoleGrantedEvent {
+      export type InputTuple = [role: BytesLike, account: AddressLike, sender: AddressLike];
+      export type OutputTuple = [role: string, account: string, sender: string];
+      export interface OutputObject {role: string, account: string, sender: string };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace RoleRevokedEvent {
+      export type InputTuple = [role: BytesLike, account: AddressLike, sender: AddressLike];
+      export type OutputTuple = [role: string, account: string, sender: string];
+      export interface OutputObject {role: string, account: string, sender: string };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
     export namespace TransferEvent {
       export type InputTuple = [from: AddressLike, to: AddressLike, value: BigNumberish];
       export type OutputTuple = [from: string, to: string, value: bigint];
       export interface OutputObject {from: string, to: string, value: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace UnpausedEvent {
+      export type InputTuple = [account: AddressLike];
+      export type OutputTuple = [account: string];
+      export interface OutputObject {account: string };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -204,12 +342,12 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
 
   
 
-  export interface IEqueVault extends BaseContract {
+  export interface EqueVault extends BaseContract {
     
-    connect(runner?: ContractRunner | null): IEqueVault;
+    connect(runner?: ContractRunner | null): EqueVault;
     waitForDeployment(): Promise<this>;
 
-    interface: IEqueVaultInterface;
+    interface: EqueVaultInterface;
 
     
   queryFilter<TCEvent extends TypedContractEvent>(
@@ -237,6 +375,38 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
 
 
     
+    
+    CURATOR_ROLE: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
+    DEFAULT_ADMIN_ROLE: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
+    GUARDIAN_ROLE: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
+    KEEPER_ROLE: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
     
     allocate: TypedContractMethod<
       [],
@@ -326,10 +496,58 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
+    depositFeeBps: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    feeRecipient: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
     freeAssets: TypedContractMethod<
       [],
       [bigint],
       'view'
+    >
+    
+
+    
+    getRoleAdmin: TypedContractMethod<
+      [role: BytesLike, ],
+      [string],
+      'view'
+    >
+    
+
+    
+    grantRole: TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    hasRole: TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
+      [boolean],
+      'view'
+    >
+    
+
+    
+    initialize: TypedContractMethod<
+      [underlying: AddressLike, name_: string, symbol_: string, admin: AddressLike, routerAddress: AddressLike, cap_: BigNumberish, feeRecipient_: AddressLike, depositFeeBps_: BigNumberish, withdrawFeeBps_: BigNumberish, ],
+      [void],
+      'nonpayable'
     >
     
 
@@ -343,7 +561,7 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
 
     
     maxDeposit: TypedContractMethod<
-      [receiver: AddressLike, ],
+      [arg0: AddressLike, ],
       [bigint],
       'view'
     >
@@ -390,6 +608,22 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
+    pause: TypedContractMethod<
+      [],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    paused: TypedContractMethod<
+      [],
+      [boolean],
+      'view'
+    >
+    
+
+    
     previewDeposit: TypedContractMethod<
       [assets: BigNumberish, ],
       [bigint],
@@ -423,9 +657,9 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
 
     
     redeem: TypedContractMethod<
-      [shares: BigNumberish, receiver: AddressLike, owner: AddressLike, ],
+      [arg0: BigNumberish, arg1: AddressLike, arg2: AddressLike, ],
       [bigint],
-      'nonpayable'
+      'view'
     >
     
 
@@ -446,8 +680,24 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
+    renounceRole: TypedContractMethod<
+      [role: BytesLike, callerConfirmation: AddressLike, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
     requestRedeem: TypedContractMethod<
       [shares: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    revokeRole: TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
       [void],
       'nonpayable'
     >
@@ -462,10 +712,42 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
+    router_: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
     setCap: TypedContractMethod<
-      [cap: BigNumberish, ],
+      [cap_: BigNumberish, ],
       [void],
       'nonpayable'
+    >
+    
+
+    
+    setFeeRecipient: TypedContractMethod<
+      [recipient: AddressLike, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    setFees: TypedContractMethod<
+      [depositFeeBps_: BigNumberish, withdrawFeeBps_: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    supportsInterface: TypedContractMethod<
+      [interfaceId: BytesLike, ],
+      [boolean],
+      'view'
     >
     
 
@@ -474,6 +756,14 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
       [],
       [string],
       'view'
+    >
+    
+
+    
+    syncAssets: TypedContractMethod<
+      [delta: BigNumberish, ],
+      [void],
+      'nonpayable'
     >
     
 
@@ -510,17 +800,53 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
-    withdraw: TypedContractMethod<
-      [assets: BigNumberish, receiver: AddressLike, owner: AddressLike, ],
-      [bigint],
+    unpause: TypedContractMethod<
+      [],
+      [void],
       'nonpayable'
+    >
+    
+
+    
+    withdraw: TypedContractMethod<
+      [arg0: BigNumberish, arg1: AddressLike, arg2: AddressLike, ],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    withdrawFeeBps: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
     >
     
 
 
     getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
 
-    getFunction(nameOrSignature: 'allocate'): TypedContractMethod<
+    getFunction(nameOrSignature: 'CURATOR_ROLE'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'DEFAULT_ADMIN_ROLE'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'GUARDIAN_ROLE'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'KEEPER_ROLE'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'allocate'): TypedContractMethod<
       [],
       [void],
       'nonpayable'
@@ -575,10 +901,40 @@ getFunction(nameOrSignature: 'deposit'): TypedContractMethod<
       [bigint],
       'nonpayable'
     >;
+getFunction(nameOrSignature: 'depositFeeBps'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'feeRecipient'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
 getFunction(nameOrSignature: 'freeAssets'): TypedContractMethod<
       [],
       [bigint],
       'view'
+    >;
+getFunction(nameOrSignature: 'getRoleAdmin'): TypedContractMethod<
+      [role: BytesLike, ],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'grantRole'): TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'hasRole'): TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
+      [boolean],
+      'view'
+    >;
+getFunction(nameOrSignature: 'initialize'): TypedContractMethod<
+      [underlying: AddressLike, name_: string, symbol_: string, admin: AddressLike, routerAddress: AddressLike, cap_: BigNumberish, feeRecipient_: AddressLike, depositFeeBps_: BigNumberish, withdrawFeeBps_: BigNumberish, ],
+      [void],
+      'nonpayable'
     >;
 getFunction(nameOrSignature: 'lockedAssets'): TypedContractMethod<
       [],
@@ -586,7 +942,7 @@ getFunction(nameOrSignature: 'lockedAssets'): TypedContractMethod<
       'view'
     >;
 getFunction(nameOrSignature: 'maxDeposit'): TypedContractMethod<
-      [receiver: AddressLike, ],
+      [arg0: AddressLike, ],
       [bigint],
       'view'
     >;
@@ -615,6 +971,16 @@ getFunction(nameOrSignature: 'name'): TypedContractMethod<
       [string],
       'view'
     >;
+getFunction(nameOrSignature: 'pause'): TypedContractMethod<
+      [],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'paused'): TypedContractMethod<
+      [],
+      [boolean],
+      'view'
+    >;
 getFunction(nameOrSignature: 'previewDeposit'): TypedContractMethod<
       [assets: BigNumberish, ],
       [bigint],
@@ -636,9 +1002,9 @@ getFunction(nameOrSignature: 'previewWithdraw'): TypedContractMethod<
       'view'
     >;
 getFunction(nameOrSignature: 'redeem'): TypedContractMethod<
-      [shares: BigNumberish, receiver: AddressLike, owner: AddressLike, ],
+      [arg0: BigNumberish, arg1: AddressLike, arg2: AddressLike, ],
       [bigint],
-      'nonpayable'
+      'view'
     >;
 getFunction(nameOrSignature: 'redeemPending'): TypedContractMethod<
       [owner: AddressLike, ],
@@ -650,8 +1016,18 @@ getFunction(nameOrSignature: 'redeemReadyAt'): TypedContractMethod<
       [bigint],
       'view'
     >;
+getFunction(nameOrSignature: 'renounceRole'): TypedContractMethod<
+      [role: BytesLike, callerConfirmation: AddressLike, ],
+      [void],
+      'nonpayable'
+    >;
 getFunction(nameOrSignature: 'requestRedeem'): TypedContractMethod<
       [shares: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'revokeRole'): TypedContractMethod<
+      [role: BytesLike, account: AddressLike, ],
       [void],
       'nonpayable'
     >;
@@ -660,15 +1036,40 @@ getFunction(nameOrSignature: 'router'): TypedContractMethod<
       [string],
       'view'
     >;
+getFunction(nameOrSignature: 'router_'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
 getFunction(nameOrSignature: 'setCap'): TypedContractMethod<
-      [cap: BigNumberish, ],
+      [cap_: BigNumberish, ],
       [void],
       'nonpayable'
+    >;
+getFunction(nameOrSignature: 'setFeeRecipient'): TypedContractMethod<
+      [recipient: AddressLike, ],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'setFees'): TypedContractMethod<
+      [depositFeeBps_: BigNumberish, withdrawFeeBps_: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'supportsInterface'): TypedContractMethod<
+      [interfaceId: BytesLike, ],
+      [boolean],
+      'view'
     >;
 getFunction(nameOrSignature: 'symbol'): TypedContractMethod<
       [],
       [string],
       'view'
+    >;
+getFunction(nameOrSignature: 'syncAssets'): TypedContractMethod<
+      [delta: BigNumberish, ],
+      [void],
+      'nonpayable'
     >;
 getFunction(nameOrSignature: 'totalAssets'): TypedContractMethod<
       [],
@@ -690,10 +1091,20 @@ getFunction(nameOrSignature: 'transferFrom'): TypedContractMethod<
       [boolean],
       'nonpayable'
     >;
-getFunction(nameOrSignature: 'withdraw'): TypedContractMethod<
-      [assets: BigNumberish, receiver: AddressLike, owner: AddressLike, ],
-      [bigint],
+getFunction(nameOrSignature: 'unpause'): TypedContractMethod<
+      [],
+      [void],
       'nonpayable'
+    >;
+getFunction(nameOrSignature: 'withdraw'): TypedContractMethod<
+      [arg0: BigNumberish, arg1: AddressLike, arg2: AddressLike, ],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'withdrawFeeBps'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
     >;
 
     getEvent(key: 'Allocated'): TypedContractEvent<AllocatedEvent.InputTuple, AllocatedEvent.OutputTuple, AllocatedEvent.OutputObject>;
@@ -702,9 +1113,17 @@ getEvent(key: 'Approval'): TypedContractEvent<ApprovalEvent.InputTuple, Approval
 getEvent(key: 'CapSet'): TypedContractEvent<CapSetEvent.InputTuple, CapSetEvent.OutputTuple, CapSetEvent.OutputObject>;
 getEvent(key: 'Deposit'): TypedContractEvent<DepositEvent.InputTuple, DepositEvent.OutputTuple, DepositEvent.OutputObject>;
 getEvent(key: 'EpochBoundary'): TypedContractEvent<EpochBoundaryEvent.InputTuple, EpochBoundaryEvent.OutputTuple, EpochBoundaryEvent.OutputObject>;
+getEvent(key: 'FeeRecipientSet'): TypedContractEvent<FeeRecipientSetEvent.InputTuple, FeeRecipientSetEvent.OutputTuple, FeeRecipientSetEvent.OutputObject>;
+getEvent(key: 'FeesSet'): TypedContractEvent<FeesSetEvent.InputTuple, FeesSetEvent.OutputTuple, FeesSetEvent.OutputObject>;
+getEvent(key: 'Initialized'): TypedContractEvent<InitializedEvent.InputTuple, InitializedEvent.OutputTuple, InitializedEvent.OutputObject>;
+getEvent(key: 'Paused'): TypedContractEvent<PausedEvent.InputTuple, PausedEvent.OutputTuple, PausedEvent.OutputObject>;
 getEvent(key: 'RedeemClaimed'): TypedContractEvent<RedeemClaimedEvent.InputTuple, RedeemClaimedEvent.OutputTuple, RedeemClaimedEvent.OutputObject>;
 getEvent(key: 'RedeemRequested'): TypedContractEvent<RedeemRequestedEvent.InputTuple, RedeemRequestedEvent.OutputTuple, RedeemRequestedEvent.OutputObject>;
+getEvent(key: 'RoleAdminChanged'): TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
+getEvent(key: 'RoleGranted'): TypedContractEvent<RoleGrantedEvent.InputTuple, RoleGrantedEvent.OutputTuple, RoleGrantedEvent.OutputObject>;
+getEvent(key: 'RoleRevoked'): TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
 getEvent(key: 'Transfer'): TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
+getEvent(key: 'Unpaused'): TypedContractEvent<UnpausedEvent.InputTuple, UnpausedEvent.OutputTuple, UnpausedEvent.OutputObject>;
 getEvent(key: 'Withdraw'): TypedContractEvent<WithdrawEvent.InputTuple, WithdrawEvent.OutputTuple, WithdrawEvent.OutputObject>;
 
     filters: {
@@ -733,6 +1152,22 @@ getEvent(key: 'Withdraw'): TypedContractEvent<WithdrawEvent.InputTuple, Withdraw
       EpochBoundary: TypedContractEvent<EpochBoundaryEvent.InputTuple, EpochBoundaryEvent.OutputTuple, EpochBoundaryEvent.OutputObject>;
     
 
+      'FeeRecipientSet(address)': TypedContractEvent<FeeRecipientSetEvent.InputTuple, FeeRecipientSetEvent.OutputTuple, FeeRecipientSetEvent.OutputObject>;
+      FeeRecipientSet: TypedContractEvent<FeeRecipientSetEvent.InputTuple, FeeRecipientSetEvent.OutputTuple, FeeRecipientSetEvent.OutputObject>;
+    
+
+      'FeesSet(uint16,uint16)': TypedContractEvent<FeesSetEvent.InputTuple, FeesSetEvent.OutputTuple, FeesSetEvent.OutputObject>;
+      FeesSet: TypedContractEvent<FeesSetEvent.InputTuple, FeesSetEvent.OutputTuple, FeesSetEvent.OutputObject>;
+    
+
+      'Initialized(uint64)': TypedContractEvent<InitializedEvent.InputTuple, InitializedEvent.OutputTuple, InitializedEvent.OutputObject>;
+      Initialized: TypedContractEvent<InitializedEvent.InputTuple, InitializedEvent.OutputTuple, InitializedEvent.OutputObject>;
+    
+
+      'Paused(address)': TypedContractEvent<PausedEvent.InputTuple, PausedEvent.OutputTuple, PausedEvent.OutputObject>;
+      Paused: TypedContractEvent<PausedEvent.InputTuple, PausedEvent.OutputTuple, PausedEvent.OutputObject>;
+    
+
       'RedeemClaimed(address,uint256)': TypedContractEvent<RedeemClaimedEvent.InputTuple, RedeemClaimedEvent.OutputTuple, RedeemClaimedEvent.OutputObject>;
       RedeemClaimed: TypedContractEvent<RedeemClaimedEvent.InputTuple, RedeemClaimedEvent.OutputTuple, RedeemClaimedEvent.OutputObject>;
     
@@ -741,8 +1176,24 @@ getEvent(key: 'Withdraw'): TypedContractEvent<WithdrawEvent.InputTuple, Withdraw
       RedeemRequested: TypedContractEvent<RedeemRequestedEvent.InputTuple, RedeemRequestedEvent.OutputTuple, RedeemRequestedEvent.OutputObject>;
     
 
+      'RoleAdminChanged(bytes32,bytes32,bytes32)': TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
+      RoleAdminChanged: TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
+    
+
+      'RoleGranted(bytes32,address,address)': TypedContractEvent<RoleGrantedEvent.InputTuple, RoleGrantedEvent.OutputTuple, RoleGrantedEvent.OutputObject>;
+      RoleGranted: TypedContractEvent<RoleGrantedEvent.InputTuple, RoleGrantedEvent.OutputTuple, RoleGrantedEvent.OutputObject>;
+    
+
+      'RoleRevoked(bytes32,address,address)': TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
+      RoleRevoked: TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
+    
+
       'Transfer(address,address,uint256)': TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
       Transfer: TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
+    
+
+      'Unpaused(address)': TypedContractEvent<UnpausedEvent.InputTuple, UnpausedEvent.OutputTuple, UnpausedEvent.OutputObject>;
+      Unpaused: TypedContractEvent<UnpausedEvent.InputTuple, UnpausedEvent.OutputTuple, UnpausedEvent.OutputObject>;
     
 
       'Withdraw(address,address,address,uint256,uint256)': TypedContractEvent<WithdrawEvent.InputTuple, WithdrawEvent.OutputTuple, WithdrawEvent.OutputObject>;

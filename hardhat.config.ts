@@ -13,6 +13,9 @@ export default defineConfig({
     profiles: {
       default: {
         version: "0.8.34",
+        settings: {
+          viaIR: true,
+        },
       },
       production: {
         version: "0.8.34",
@@ -21,6 +24,7 @@ export default defineConfig({
             enabled: true,
             runs: 200,
           },
+          viaIR: true,
         },
       },
       "slang-solx": {
@@ -30,9 +34,9 @@ export default defineConfig({
           optimizer: {
             enabled: true,
             mode: "3",
-          }
+          },
+          dangerouslyAllowSlangSolxInProduction: true,
         },
-        dangerouslyAllowSlangSolxInProduction: true,
       },
     },
   },

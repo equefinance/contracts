@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {MockV3Aggregator} from "../../contracts/oracle/MockV3Aggregator.sol";
+import {EqueAccess} from "../../contracts/utils/EqueAccess.sol";
 import {MockSequencerFeed} from "../../contracts/oracle/MockSequencerFeed.sol";
 import {Errors} from "../../contracts/libraries/Errors.sol";
 
@@ -36,7 +37,7 @@ contract MockFeedsTest is Test {
 
     function test_StrangerCannotUpdate() public {
         vm.prank(stranger);
-        vm.expectRevert(abi.encodeWithSelector(MockV3Aggregator.NotKeeper.selector));
+        vm.expectRevert(abi.encodeWithSelector(EqueAccess.NotKeeper.selector));
         feed.updateAnswer(1);
     }
 

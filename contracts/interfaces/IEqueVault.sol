@@ -13,6 +13,7 @@ interface IEqueVault is IERC4626 {
     event Allocating(uint256 assets);
     event CapSet(uint256 cap);
     event EpochBoundary();
+    event Allocated(uint256 assets);
 
     error RedeemNotReady(uint256 readyAt);
     error NoRedeemRequest();

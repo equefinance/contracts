@@ -17,7 +17,6 @@ contract MockV3Aggregator is AggregatorV3Interface, EqueAccess {
 
     event AnswerUpdated(int256 indexed answer, uint80 indexed round, uint256 updatedAt);
 
-    error NotKeeper();
     error AnswerTooLarge();
 
     constructor(address keeper, int256 initialAnswer) EqueAccess(keeper) {
@@ -68,8 +67,4 @@ contract MockV3Aggregator is AggregatorV3Interface, EqueAccess {
         emit AnswerUpdated(answer, latestRound, block.timestamp);
     }
 
-    modifier onlyKeeper() {
-        if (!hasRole(KEEPER_ROLE, msg.sender)) revert NotKeeper();
-        _;
-    }
 }
