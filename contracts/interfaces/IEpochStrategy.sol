@@ -33,6 +33,7 @@ interface IEpochStrategy {
 
     error NotVault();
     error StateMismatch(State expected, State actual);
+    error AuctionNotOpen();
     error AuctionStillOpen(uint256 auctionEnd);
     error EpochNotExpired(uint256 expiry);
     error BidBelowFloor(uint256 floor, uint256 bid);
@@ -46,7 +47,8 @@ interface IEpochStrategy {
 
     function currentEpoch() external view returns (Epoch memory);
 
-    function startEpoch() external;
+    /// The market-hours bypass is an explicit parameter, never silent.
+    function startEpoch(bool bypassMarketHours) external;
 
     function bid(uint256 amount) external;
 

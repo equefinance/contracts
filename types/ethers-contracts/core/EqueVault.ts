@@ -6,7 +6,7 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface EqueVaultInterface extends Interface {
-    getFunction(nameOrSignature: "CURATOR_ROLE" | "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "KEEPER_ROLE" | "allocate" | "allowance" | "approve" | "asset" | "balanceOf" | "cap" | "claim" | "convertToAssets" | "convertToShares" | "decimals" | "deposit" | "depositFeeBps" | "feeRecipient" | "freeAssets" | "getRoleAdmin" | "grantRole" | "hasRole" | "initialize" | "lockedAssets" | "maxDeposit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "redeem" | "redeemPending" | "redeemReadyAt" | "renounceRole" | "requestRedeem" | "revokeRole" | "router" | "router_" | "setCap" | "setFeeRecipient" | "setFees" | "supportsInterface" | "symbol" | "syncAssets" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "withdraw" | "withdrawFeeBps"): FunctionFragment;
+    getFunction(nameOrSignature: "CURATOR_ROLE" | "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "KEEPER_ROLE" | "allocate" | "allowance" | "approve" | "asset" | "balanceOf" | "cap" | "claim" | "convertToAssets" | "convertToShares" | "decimals" | "deposit" | "depositFeeBps" | "feeRecipient" | "freeAssets" | "getRoleAdmin" | "grantRole" | "hasRole" | "initialize" | "lockedAssets" | "maxDeposit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "redeem" | "redeemPending" | "redeemReadyAt" | "renounceRole" | "requestRedeem" | "revokeRole" | "router" | "router_" | "setCap" | "setFeeRecipient" | "setFees" | "supportsInterface" | "symbol" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "withdraw" | "withdrawFeeBps"): FunctionFragment;
 
     getEvent(nameOrSignatureOrTopic: "Allocated" | "Allocating" | "Approval" | "CapSet" | "Deposit" | "EpochBoundary" | "FeeRecipientSet" | "FeesSet" | "Initialized" | "Paused" | "RedeemClaimed" | "RedeemRequested" | "RoleAdminChanged" | "RoleGranted" | "RoleRevoked" | "Transfer" | "Unpaused" | "Withdraw"): EventFragment;
 
@@ -58,7 +58,6 @@ encodeFunctionData(functionFragment: 'setFeeRecipient', values: [AddressLike]): 
 encodeFunctionData(functionFragment: 'setFees', values: [BigNumberish, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string;
 encodeFunctionData(functionFragment: 'symbol', values?: undefined): string;
-encodeFunctionData(functionFragment: 'syncAssets', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'totalAssets', values?: undefined): string;
 encodeFunctionData(functionFragment: 'totalSupply', values?: undefined): string;
 encodeFunctionData(functionFragment: 'transfer', values: [AddressLike, BigNumberish]): string;
@@ -115,7 +114,6 @@ decodeFunctionResult(functionFragment: 'setFeeRecipient', data: BytesLike): Resu
 decodeFunctionResult(functionFragment: 'setFees', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'syncAssets', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'totalAssets', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'totalSupply', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'transfer', data: BytesLike): Result;
@@ -760,14 +758,6 @@ decodeFunctionResult(functionFragment: 'withdrawFeeBps', data: BytesLike): Resul
     
 
     
-    syncAssets: TypedContractMethod<
-      [delta: BigNumberish, ],
-      [void],
-      'nonpayable'
-    >
-    
-
-    
     totalAssets: TypedContractMethod<
       [],
       [bigint],
@@ -1065,11 +1055,6 @@ getFunction(nameOrSignature: 'symbol'): TypedContractMethod<
       [],
       [string],
       'view'
-    >;
-getFunction(nameOrSignature: 'syncAssets'): TypedContractMethod<
-      [delta: BigNumberish, ],
-      [void],
-      'nonpayable'
     >;
 getFunction(nameOrSignature: 'totalAssets'): TypedContractMethod<
       [],

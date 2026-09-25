@@ -21,7 +21,7 @@ export declare namespace IEpochStrategy {
 encodeFunctionData(functionFragment: 'closeAuction', values?: undefined): string;
 encodeFunctionData(functionFragment: 'currentEpoch', values?: undefined): string;
 encodeFunctionData(functionFragment: 'settleEpoch', values?: undefined): string;
-encodeFunctionData(functionFragment: 'startEpoch', values?: undefined): string;
+encodeFunctionData(functionFragment: 'startEpoch', values: [boolean]): string;
 encodeFunctionData(functionFragment: 'state', values?: undefined): string;
 encodeFunctionData(functionFragment: 'vault', values?: undefined): string;
 
@@ -174,7 +174,7 @@ decodeFunctionResult(functionFragment: 'vault', data: BytesLike): Result;
 
     
     startEpoch: TypedContractMethod<
-      [],
+      [bypassMarketHours: boolean, ],
       [void],
       'nonpayable'
     >
@@ -220,7 +220,7 @@ getFunction(nameOrSignature: 'settleEpoch'): TypedContractMethod<
       'nonpayable'
     >;
 getFunction(nameOrSignature: 'startEpoch'): TypedContractMethod<
-      [],
+      [bypassMarketHours: boolean, ],
       [void],
       'nonpayable'
     >;

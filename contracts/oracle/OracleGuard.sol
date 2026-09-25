@@ -76,7 +76,7 @@ library OracleGuard {
             if (out.price > high || out.price < low) revert Errors.OracleDeviated(out.price, prevPrice);
         }
 
-        if (feed.checkMarketHours) _checkMarketHours();
+        if (feed.checkMarketHours) requireMarketHours();
     }
 
     function _checkSequencer(AggregatorV3Interface sequencerFeed) private view {
@@ -88,7 +88,7 @@ library OracleGuard {
         if (block.timestamp - updatedAt < SEQ_GRACE_PERIOD) revert Errors.SequencerDown();
     }
 
-    function _checkMarketHours() private view {
+    function requireMarketHours() internal view {
         uint256 day = (block.timestamp / 1 days + 4) % 7; // 0 = Thursday epoch time
         if (day == 0 || day == 6) revert Errors.MarketClosed(day, (block.timestamp % 1 days));
         uint256 timeOfDay = block.timestamp % 1 days;

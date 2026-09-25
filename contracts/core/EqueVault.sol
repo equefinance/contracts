@@ -42,11 +42,6 @@ contract EqueVault is IERC20, IERC4626, IEqueVault, ERC20, AccessControl, Pausab
     mapping(address owner => uint256 pending) public redeemPending;
     mapping(address owner => uint256 readyAt) public redeemReadyAt;
 
-    // Assets controlled by the vault: its own token balance plus whatever the
-    // router has parked in strategies. Maintained on every deposit, withdraw,
-    // and allocation so share pricing never re-derives from balances.
-    uint256 internal _assets;
-
     error NothingClaimable();
     error NotRouter();
     error FeesTooHigh(uint16 max);
@@ -120,8 +115,16 @@ contract EqueVault is IERC20, IERC4626, IEqueVault, ERC20, AccessControl, Pausab
         return 18;
     }
 
+    /// Derived, never a stored counter: the vault's buffer plus everything
+    /// the strategies hold. Premium and lending yield land in strategy
+    /// balances, so the books cannot drift from reality.
     function totalAssets() public view override returns (uint256) {
-        return _assets;
+        (, uint256[] memory holdings) = router_.strategyHoldings(address(this));
+        uint256 inStrategies;
+        for (uint256 i; i < holdings.length; i++) {
+            inStrategies += holdings[i];
+        }
+        return _underlying.balanceOf(address(this)) + inStrategies;
     }
 
     /// Buffer plus whatever strategies hold that is not epoch-locked.
@@ -145,11 +148,11 @@ contract EqueVault is IERC20, IERC4626, IEqueVault, ERC20, AccessControl, Pausab
     // --- ERC-4626 accounting (EIP-4626 rounding, mirrors OpenZeppelin) ---
 
     function _convertToShares(uint256 assets, Math.Rounding rounding) internal view returns (uint256) {
-        return assets.mulDiv(totalSupply() + 1, _assets + 1, rounding);
+        return assets.mulDiv(totalSupply() + 1, totalAssets() + 1, rounding);
     }
 
     function _convertToAssets(uint256 shares, Math.Rounding rounding) internal view returns (uint256) {
-        return shares.mulDiv(_assets + 1, totalSupply() + 1, rounding);
+        return shares.mulDiv(totalAssets() + 1, totalSupply() + 1, rounding);
     }
 
     function convertToShares(uint256 assets) public view returns (uint256) {
@@ -161,7 +164,8 @@ contract EqueVault is IERC20, IERC4626, IEqueVault, ERC20, AccessControl, Pausab
     }
 
     function maxDeposit(address) public view returns (uint256) {
-        return cap == 0 ? type(uint256).max : cap - _assets;
+        uint256 total = totalAssets();
+        return cap == 0 ? type(uint256).max : total >= cap ? 0 : cap - total;
     }
 
     /// Mint is expressed in shares; the asset-side cap is converted so a
@@ -202,15 +206,12 @@ contract EqueVault is IERC20, IERC4626, IEqueVault, ERC20, AccessControl, Pausab
         if (assets > max) revert Errors.VaultCapExceeded(cap, assets);
         if (assets == 0) revert Errors.ZeroAmount();
 
+        uint256 shares = Math.mulDiv(assets - Math.mulDiv(assets, depositFeeBps, 10_000), totalSupply() + 1, totalAssets() + 1, Math.Rounding.Floor);
         uint256 fee = Math.mulDiv(assets, depositFeeBps, 10_000);
-        uint256 netAssets = assets - fee;
         _underlying.safeTransferFrom(msg.sender, address(this), assets);
         if (fee > 0 && feeRecipient != address(0)) {
             _underlying.safeTransfer(feeRecipient, fee);
         }
-
-        uint256 shares = netAssets.mulDiv(totalSupply() + 1, _assets + 1, Math.Rounding.Floor);
-        _assets += netAssets;
         _mint(receiver, shares);
 
         emit Deposit(msg.sender, receiver, assets, shares);
@@ -219,18 +220,15 @@ contract EqueVault is IERC20, IERC4626, IEqueVault, ERC20, AccessControl, Pausab
 
     function mint(uint256 shares, address receiver) public whenNotPaused returns (uint256) {
         if (shares == 0) revert Errors.ZeroAmount();
-        uint256 assets = shares.mulDiv(_assets + 1, totalSupply() + 1, Math.Rounding.Ceil);
+        uint256 assets = shares.mulDiv(totalAssets() + 1, totalSupply() + 1, Math.Rounding.Ceil);
         uint256 max = maxMint(receiver);
         if (assets > max) revert Errors.VaultCapExceeded(cap, assets);
 
         uint256 fee = Math.mulDiv(assets, depositFeeBps, 10_000);
-        uint256 netAssets = assets - fee;
         _underlying.safeTransferFrom(msg.sender, address(this), assets);
         if (fee > 0 && feeRecipient != address(0)) {
             _underlying.safeTransfer(feeRecipient, fee);
         }
-
-        _assets += netAssets;
         _mint(receiver, shares);
 
         emit Deposit(msg.sender, receiver, assets, shares);
@@ -266,7 +264,6 @@ contract EqueVault is IERC20, IERC4626, IEqueVault, ERC20, AccessControl, Pausab
         assets = previewRedeem(pending);
         if (assets > freeAssets()) revert Errors.EpochLockedForWithdraw();
 
-        _assets -= assets;
         _burn(address(this), pending);
 
         uint256 fee = Math.mulDiv(assets, withdrawFeeBps, 10_000);
@@ -295,18 +292,7 @@ contract EqueVault is IERC20, IERC4626, IEqueVault, ERC20, AccessControl, Pausab
             IStrategy(strategies[i]).allocate(amounts[i]);
             buffer -= amounts[i];
         }
-        emit Allocated(_assets - buffer);
-    }
-
-    /// Router reports settled epoch results: strategy balances grew or shrank
-    /// and the vault's books must follow.
-    function syncAssets(int256 delta) external {
-        if (msg.sender != address(router_)) revert NotRouter();
-        if (delta >= 0) {
-            _assets += uint256(delta);
-        } else {
-            _assets -= uint256(-delta);
-        }
+        emit Allocated(totalAssets() - buffer);
     }
 
     function setCap(uint256 cap_) external onlyCurator {

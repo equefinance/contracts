@@ -48,11 +48,17 @@ library EpochMath {
         return notional - payoff(notional, spot, strikePrice) + premium;
     }
 
+    /// @notice The reserve floor: floorBps of the notional, the minimum
+    /// qualifying bid for the epoch's auction.
+    function reserveFloor(uint256 notional, uint256 floorBps) internal pure returns (uint256) {
+        return Math.mulDiv(notional, floorBps, BPS, Math.Rounding.Ceil);
+    }
+
     /// @notice True when a bid qualifies for the auction: at or above the
-    /// reserve floor, which is floorBps of the notional.
+    /// reserve floor.
     function bidQualifies(uint256 bid, uint256 notional, uint256 floorBps) internal pure returns (bool) {
         if (notional == 0) return false;
-        return bid >= Math.mulDiv(notional, floorBps, BPS, Math.Rounding.Ceil);
+        return bid >= reserveFloor(notional, floorBps);
     }
 
     /// @notice Minimum acceptable next bid: 1% over the current high, rounded

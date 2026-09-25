@@ -7,6 +7,11 @@
 
   const _abi = [
   {
+    "inputs": [],
+    "name": "AuctionNotOpen",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -357,7 +362,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "bypassMarketHours",
+        "type": "bool"
+      }
+    ],
     "name": "startEpoch",
     "outputs": [],
     "stateMutability": "nonpayable",
