@@ -80,12 +80,15 @@ contract EqueRouter is EqueAccess, IEqueRouter {
         return (strategies, holdings);
     }
 
-    /// Registry position 0 is the epoch strategy by wiring order; only it
-    /// can lock collateral.
+    /// Registry position 0 is the epoch strategy by wiring order. Its whole
+    /// balance counts as locked from the moment an epoch opens: the notional
+    /// backs the option being auctioned and the escrowed premium backs
+    /// settlement, so neither may be paid out before the epoch settles.
     function strategyLocked(address vault) external view returns (uint256) {
         address[] memory strategies = _configs[vault].strategies;
         if (strategies.length == 0) return 0;
-        if (IEpochStrategy(strategies[0]).state() == IEpochStrategy.State.Locked) {
+        IEpochStrategy.State s = IEpochStrategy(strategies[0]).state();
+        if (s == IEpochStrategy.State.Auction || s == IEpochStrategy.State.Locked) {
             return IStrategy(strategies[0]).totalAssets();
         }
         return 0;

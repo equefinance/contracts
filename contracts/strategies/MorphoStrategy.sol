@@ -7,6 +7,24 @@ import {EqueAccess} from "../utils/EqueAccess.sol";
 import {IStrategy} from "../interfaces/IStrategy.sol";
 import {Errors} from "../libraries/Errors.sol";
 
+// ---------------------------------------------------------------------------
+// TODO - DEMO SCOPE NOTE: 
+// 
+// MorphoStrategy is intentionally NOT deployed right now.
+// The current deployment ships two strategies per vault:
+//   - EpochStrategy        → the options-premium engine
+//   - MockLendingStrategy  → the lending leg of the router's two-strategy model
+// A mock lending leg is sufficient for the demo: what is being demonstrated
+// is the epoch/auction mechanism, not the lending venue.
+//
+// Morpho Blue integration is a tracked post-demo milestone.
+// Two known integration gaps, both with a defined fix:
+//   1. allocate() is pull-style while the vault pushes funds  → make it push-style
+//   2. the constructor needs the vault address before the vault clone exists
+//      → one-time setVault wiring after the clone is created
+// ---------------------------------------------------------------------------
+
+
 interface IMorpho {
     struct MarketParams {
         address loanToken;
@@ -82,8 +100,11 @@ contract MorphoStrategy is EqueAccess, IStrategy {
         return _expectedSupplyAssets();
     }
 
+    /// Fund flows are vault-only: the keeper key must never be able to pull
+    /// strategy funds to itself. (The push-style allocate rework is tracked
+    /// separately.)
     function allocate(uint256 assets) external {
-        if (msg.sender != vault && !hasRole(KEEPER_ROLE, msg.sender)) revert Errors.NotVault();
+        if (msg.sender != vault) revert Errors.NotVault();
         if (assets == 0) revert Errors.ZeroAmount();
         assetToken.safeTransferFrom(msg.sender, address(this), assets);
         assetToken.forceApprove(address(morpho), assets);
@@ -92,7 +113,7 @@ contract MorphoStrategy is EqueAccess, IStrategy {
     }
 
     function withdraw(uint256 assets) external returns (uint256) {
-        if (msg.sender != vault && !hasRole(KEEPER_ROLE, msg.sender)) revert Errors.NotVault();
+        if (msg.sender != vault) revert Errors.NotVault();
         if (assets == 0) return 0;
         uint256 owned = _expectedSupplyAssets();
         uint256 take = assets > owned ? owned : assets;

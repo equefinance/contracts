@@ -74,6 +74,7 @@ contract EpochFlowTest is Test {
             epochWeightBps: 7_000,
             lendingWeightBps: 3_000
         });
+        vm.prank(admin);
         vault = EqueVault(factory.deployVault(spec));
         router = factory.router();
 

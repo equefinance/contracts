@@ -171,6 +171,8 @@ contract CoreFixture is Test {
             epochWeightBps: 7_000,
             lendingWeightBps: 3_000
         });
+        // deployVault is admin-gated since the router is shared.
+        vm.prank(admin);
         vault = EqueVault(factory.deployVault(spec));
         router = factory.router();
 

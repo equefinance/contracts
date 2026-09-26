@@ -13,10 +13,12 @@ import {Errors} from "../libraries/Errors.sol";
 /// @notice The covered-call engine. One strategy per vault runs a repeating
 /// epoch: snapshot the oracle spot, auction one call on the vault's allocated
 /// notional at a 105% strike, lock through expiry, then cash-settle the payoff
-/// against the winning premium and roll. Bids are permissionless; the winner
-/// pays the premium at settlement, netted against the payoff the vault owes,
-/// so a winning bid never needs escrow. Collateral (the notional) never
-/// leaves the strategy while an epoch runs.
+/// and roll. Bids are permissionless. A bid escrows its premium the moment it
+/// becomes the high bid, so a winner that later walks away, spends the tokens,
+/// or never approves again cannot block settlement; settlement pays the
+/// in-the-money payoff out of funds already in hand. The whole committed
+/// amount (notional plus escrowed premium) stays inside the strategy from
+/// auction open until settlement.
 contract EpochStrategy is EqueAccess, IStrategy, IEpochStrategy {
     using SafeERC20 for IERC20;
 
@@ -101,7 +103,9 @@ contract EpochStrategy is EqueAccess, IStrategy, IEpochStrategy {
     }
 
     function claimablePremium() external view returns (uint256) {
-        if (_state == IEpochStrategy.State.Locked) return _highBid;
+        if (_state == IEpochStrategy.State.Auction || _state == IEpochStrategy.State.Locked) {
+            return _highBid;
+        }
         return 0;
     }
 
@@ -111,27 +115,34 @@ contract EpochStrategy is EqueAccess, IStrategy, IEpochStrategy {
         return assetToken.balanceOf(address(this));
     }
 
-    /// Liquid means withdrawable now: everything except the locked notional
-    /// of a running epoch.
+    /// Liquid means withdrawable now. From the moment an epoch opens until it
+    /// settles the whole balance is committed: the notional backs the option
+    /// being auctioned and the escrowed premium backs settlement, so both
+    /// stay put. No outside party can drain the lot mid-epoch and leave
+    /// settlement unable to pay its payoff.
     function liquidAssets() public view returns (uint256) {
         uint256 balance = assetToken.balanceOf(address(this));
-        if (_state == IEpochStrategy.State.Locked) {
-            return balance - _notional;
+        if (_state == IEpochStrategy.State.Auction || _state == IEpochStrategy.State.Locked) {
+            uint256 committed = _notional + _highBid;
+            return balance > committed ? balance - committed : 0;
         }
         return balance;
     }
 
+    /// Fund flows are vault-only: the vault is the sole custodian and reaches
+    /// strategies through EqueVault.allocate and EqueVault.claim, so the
+    /// keeper key can never pull strategy funds to itself.
     function allocate(uint256) external view {
-        if (msg.sender != vault && !hasRole(KEEPER_ROLE, msg.sender)) revert Errors.NotVault();
+        if (msg.sender != vault) revert Errors.NotVault();
         // The vault transfers the tokens itself; allocation is refused while
-        // an epoch runs so the notional can never shift mid-auction.
+        // an epoch runs so the notional can never shift mid-epoch.
         if (_state == IEpochStrategy.State.Auction || _state == IEpochStrategy.State.Locked) {
             revert IEpochStrategy.AuctionNotOpen();
         }
     }
 
     function withdraw(uint256 assets) external returns (uint256) {
-        if (msg.sender != vault && !hasRole(KEEPER_ROLE, msg.sender)) revert Errors.NotVault();
+        if (msg.sender != vault) revert Errors.NotVault();
         uint256 liquid = liquidAssets();
         uint256 take = assets > liquid ? liquid : assets;
         assetToken.safeTransfer(msg.sender, take);
@@ -185,9 +196,19 @@ contract EpochStrategy is EqueAccess, IStrategy, IEpochStrategy {
 
         uint256 floor = EpochMath.reserveFloor(_notional, floorBps);
         if (amount < floor) revert IEpochStrategy.BidBelowFloor(floor, amount);
-        if (_highBid > 0) {
-            uint256 minNext = EpochMath.nextBidFloor(_highBid);
+        address previousBidder = _highBidder;
+        uint256 previousBid = _highBid;
+        if (previousBid > 0) {
+            uint256 minNext = EpochMath.nextBidFloor(previousBid);
             if (amount < minNext) revert IEpochStrategy.BidTooLow(minNext, amount);
+        }
+
+        // Escrow the new premium before releasing the old one: a failed
+        // refund reverts the whole bid, so the strategy never holds a high
+        // bid it has not collected.
+        assetToken.safeTransferFrom(msg.sender, address(this), amount);
+        if (previousBidder != address(0)) {
+            assetToken.safeTransfer(previousBidder, previousBid);
         }
 
         _highBidder = msg.sender;
@@ -218,13 +239,12 @@ contract EpochStrategy is EqueAccess, IStrategy, IEpochStrategy {
         uint256 spotAtExpiry = OracleGuard.read(feed, _lastSpot).price;
         uint256 payoff = EpochMath.payoff(_notional, spotAtExpiry, _strike);
 
-        if (_highBidder != address(0)) {
-            // Winner pays the premium; if the call finished in the money the
-            // payoff flows back, netted in two transfers at settle.
-            assetToken.safeTransferFrom(_highBidder, address(this), _highBid);
-            if (payoff > 0) {
-                assetToken.safeTransfer(_highBidder, payoff);
-            }
+        if (_highBidder != address(0) && payoff > 0) {
+            // The premium was escrowed at bid time, so settlement never pulls
+            // from the winner. Only the in-the-money payoff moves, and the
+            // balance always covers it because the payoff is capped by the
+            // notional that this contract already holds.
+            assetToken.safeTransfer(_highBidder, payoff);
         }
 
         uint256 kept = EpochMath.settle(_notional, spotAtExpiry, _strike, _highBid);

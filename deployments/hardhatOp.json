@@ -1,7 +1,7 @@
 {
-  "network": "hardhatMainnet",
+  "network": "hardhatOp",
   "chainId": 31337,
-  "deployedAt": "2026-09-26T17:53:43.561Z",
+  "deployedAt": "2026-09-26T18:14:48.703Z",
   "deployer": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
   "tokens": {
     "TSLAc": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",

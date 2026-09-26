@@ -45,14 +45,17 @@ contract MockLendingStrategy is EqueAccess, IStrategy {
         return (principal * 2 * (block.timestamp - depositedAt)) / 100 / 365 days;
     }
 
+    /// Fund flows are vault-only: the vault is the sole custodian and reaches
+    /// strategies through EqueVault.allocate and EqueVault.claim, so the
+    /// keeper key can never pull strategy funds to itself.
     function allocate(uint256 assets) external {
-        if (msg.sender != vault && !hasRole(KEEPER_ROLE, msg.sender)) revert Errors.NotVault();
+        if (msg.sender != vault) revert Errors.NotVault();
         if (principal == 0) depositedAt = block.timestamp;
         principal += assets;
     }
 
     function withdraw(uint256 assets) external returns (uint256) {
-        if (msg.sender != vault && !hasRole(KEEPER_ROLE, msg.sender)) revert Errors.NotVault();
+        if (msg.sender != vault) revert Errors.NotVault();
         uint256 take = assets > principal ? principal : assets;
         principal -= take;
         assetToken.safeTransfer(msg.sender, take);

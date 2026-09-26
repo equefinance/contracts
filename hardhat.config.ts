@@ -49,6 +49,18 @@ export default defineConfig({
       type: "edr-simulated",
       chainType: "op",
     },
+    hardhatFork: {
+      type: "edr-simulated",
+      forking: {
+        url: configVariable("FORK_RPC_URL"),
+      },
+      accounts: [
+        {
+          privateKey: configVariable("DEPLOYER_PRIVATE_KEY"),
+          balance: "1000000000000000000000",
+        },
+      ],
+    },
     tenderly: {
       type: "http",
       chainType: "generic",

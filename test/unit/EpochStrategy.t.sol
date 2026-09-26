@@ -9,6 +9,7 @@ import {OracleGuard} from "../../contracts/oracle/OracleGuard.sol";
 import {EpochStrategy} from "../../contracts/strategies/EpochStrategy.sol";
 import {IEpochStrategy} from "../../contracts/interfaces/IEpochStrategy.sol";
 import {EpochMath} from "../../contracts/libraries/EpochMath.sol";
+import {Errors} from "../../contracts/libraries/Errors.sol";
 
 contract EpochStrategyTest is Test {
     MockB20 token;
@@ -288,15 +289,73 @@ contract EpochStrategyTest is Test {
         assertEq(strategy.currentEpoch().notional, 10.12 ether);
     }
 
+    // --- Premium escrow (C1) ---
+
+    function test_BidEscrowsPremiumAtBidTime() public {
+        _start();
+        _bid(bidder1, 0.12 ether);
+        assertEq(token.balanceOf(bidder1), 100 ether - 0.12 ether);
+        assertEq(token.balanceOf(address(strategy)), 10.12 ether);
+        assertEq(strategy.claimablePremium(), 0.12 ether);
+    }
+
+    function test_OutbidRefundsPreviousBidder() public {
+        _start();
+        _bid(bidder1, 0.12 ether);
+        _bid(bidder2, 0.1212 ether + 1);
+        assertEq(token.balanceOf(bidder1), 100 ether); // fully refunded
+        assertEq(token.balanceOf(bidder2), 100 ether - (0.1212 ether + 1));
+        assertEq(token.balanceOf(address(strategy)), 10 ether + 0.1212 ether + 1);
+        assertEq(strategy.currentEpoch().highBidder, bidder2);
+    }
+
+    function test_BidWithoutApprovalReverts() public {
+        _start();
+        address noApproval = address(0xD08);
+        vm.prank(admin);
+        token.mint(noApproval, 1 ether);
+        vm.prank(noApproval);
+        vm.expectRevert();
+        strategy.bid(0.12 ether);
+    }
+
+    function test_SettlementDoesNotDependOnWinnerFunds() public {
+        _start();
+        _bid(bidder1, 0.12 ether);
+        // The premium is already escrowed; even if the winner spends every
+        // remaining token, settlement still pays the payoff from what this
+        // contract already holds. This is the griefing case C1 closed.
+        uint256 remaining = token.balanceOf(bidder1);
+        vm.prank(bidder1);
+        token.transfer(stranger, remaining);
+        assertEq(token.balanceOf(bidder1), 0);
+
+        _close();
+        _settleAt(200_00000000);
+        assertEq(token.balanceOf(address(strategy)), 9.57 ether);
+        assertEq(token.balanceOf(bidder1), 0.55 ether); // payoff still delivered
+    }
+
     // --- Locked collateral ---
 
     function test_LockedNotionalUntouchableMidEpoch() public {
         _start();
         _bid(bidder1, 0.12 ether);
         _close();
-        vm.prank(keeper);
+        // The vault is the only caller that may pull; the whole balance is
+        // committed (notional plus escrow), so nothing comes out.
+        vm.prank(vault);
         uint256 got = strategy.withdraw(10 ether);
-        assertEq(got, 0); // nothing liquid while locked
+        assertEq(got, 0);
+    }
+
+    function test_AuctionFundsUntouchableMidAuction() public {
+        _start();
+        _bid(bidder1, 0.12 ether);
+        // Even before the close the lot is committed, so the auction cannot
+        // be drained out from under itself.
+        vm.prank(vault);
+        assertEq(strategy.withdraw(10 ether), 0);
     }
 
     function test_ClaimablePremiumDuringLock() public {
@@ -379,10 +438,21 @@ contract EpochStrategyTest is Test {
         assertEq(token.balanceOf(vault), NOTIONAL);
     }
 
-    function test_WithdrawOnlyVaultOrKeeper() public {
+    function test_WithdrawOnlyVault() public {
         vm.prank(stranger);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(Errors.NotVault.selector));
         strategy.withdraw(1);
+        vm.prank(keeper);
+        vm.expectRevert(abi.encodeWithSelector(Errors.NotVault.selector));
+        strategy.withdraw(1);
+    }
+
+    function test_AllocateOnlyVault() public {
+        vm.prank(keeper);
+        vm.expectRevert(abi.encodeWithSelector(Errors.NotVault.selector));
+        strategy.allocate(1);
+        vm.prank(vault);
+        strategy.allocate(1); // the vault's own call is allowed
     }
 
 }

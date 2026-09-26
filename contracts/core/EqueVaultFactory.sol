@@ -52,7 +52,11 @@ contract EqueVaultFactory {
         emit RouterDeployed(address(router));
     }
 
+    /// Restricted to the admin that deployed the factory: the router is
+    /// shared across vaults, so an open factory would let anyone register
+    /// arbitrary strategies and clutter every vault's registry.
     function deployVault(VaultSpec memory spec) external returns (address vault) {
+        if (msg.sender != admin) revert Errors.Unauthorized();
         if (address(spec.underlying) == address(0) || spec.epochStrategy == address(0) || spec.lendingStrategy == address(0)) {
             revert Errors.ZeroAddress();
         }

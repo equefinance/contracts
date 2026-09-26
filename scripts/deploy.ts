@@ -42,7 +42,7 @@ type ChainConfig = {
   lendingStrategyFallback: string;
 };
 
-type VerificationRecord = { address: string; name: string; status: "verified" | "failed" };
+type VerificationRecord = { address: string; name: string; status: "verified" | "skipped" | "failed" };
 
 export type Deployed = {
   network: string;
@@ -60,22 +60,16 @@ export type Deployed = {
 };
 
 const hre = hrePkg as unknown as HardhatRuntimeEnvironment;
-const LOCAL_NETWORKS = ["hardhatMainnet", "hardhatOp", "tenderly"];
+const LOCAL_NETWORKS = ["hardhatMainnet", "hardhatOp", "hardhatFork", "tenderly"];
 
 type Connection = Awaited<ReturnType<typeof network.create>>;
 
 export async function deployMain(connection?: Connection): Promise<Deployed> {
-  // Reuse the caller's connection when given so a deploy and its follow-up
-  // scripts share one chain; each network.create() is an isolated blockchain.
-  const { viem } = connection ?? (await network.create());
-
-  // The runner passes the network via HARDHAT_NETWORK; the script defaults
-  // to the local chain so a bare run can never reach a live network.
-  // The Tenderly rehearsal fork carries Base Sepolia state, so it shares
-  // the Base Sepolia config instead of needing its own file.
-  const networkId = process.env.HARDHAT_NETWORK ?? "hardhatMainnet";
+  const conn = connection ?? (await network.create());
+  const { viem } = conn;
+  const networkId = conn.networkName === "hardhat" ? "hardhatMainnet" : conn.networkName;
   const configName =
-    networkId === "hardhatMainnet" || networkId === "hardhatOp" || networkId === "tenderly"
+    networkId === "hardhatMainnet" || networkId === "hardhatOp" || networkId === "hardhatFork" || networkId === "tenderly"
       ? "base-sepolia"
       : networkId;
   const config: ChainConfig = JSON.parse(readFileSync(resolve("scripts/config", `${configName}.json`), "utf8"));
@@ -103,10 +97,11 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
   const feeRecipient = (process.env.FEE_RECIPIENT_ADDRESS ?? deployer.account.address) as `0x${string}`;
 
   async function verify(address: string, name: string, constructorArgs: unknown[], contractFqn: string) {
-    // Verification only ever targets real explorers; local runs record a
-    // pass-through so the artifact shape stays identical.
+    // No explorer exists for a local chain or a rehearsal fork, so those runs
+    // record an honest skip instead of claiming a verification that never
+    // ran. Real networks do the full round.
     if (LOCAL_NETWORKS.includes(networkId)) {
-      artifact.verification.push({ address, name, status: "verified" });
+      artifact.verification.push({ address, name, status: "skipped" });
       return;
     }
     for (let attempt = 1; attempt <= 2; attempt++) {
@@ -128,9 +123,6 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
     }
   }
 
-  // Remote testnets sometimes drop a send under burst load while the call
-  // itself is perfectly valid, so wiring writes retry once and each one
-  // waits for its receipt before the next goes out.
   async function writeWithRetry(label: string, send: () => Promise<`0x${string}`>) {
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
@@ -204,13 +196,21 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
   await verify(factory.address, "EqueVaultFactory", [deployer.account.address], "contracts/core/EqueVaultFactory.sol:EqueVaultFactory");
   await verify(routerAddress, "EqueRouter", [deployer.account.address, factory.address], "contracts/core/EqueRouter.sol:EqueRouter");
 
+  // Vault clones point at this implementation; without verifying it, every
+  // vault shows as an unverified proxy on the explorer.
+  const vaultImplementation = await factory.read.vaultImplementation();
+  console.log(`EqueVault implementation -> ${vaultImplementation}`);
+  await verify(vaultImplementation, "EqueVault(implementation)", [], "contracts/core/EqueVault.sol:EqueVault");
+
   const router = await viem.getContractAt("EqueRouter", routerAddress);
 
   for (const vaultConfig of config.vaults) {
     const tokenAddress = artifact.tokens[vaultConfig.underlying.symbol]!;
     const feedAddress = artifact.feeds[vaultConfig.underlying.symbol]!;
 
-    const epochStrategy = await viem.deployContract("EpochStrategy", [
+    // One argument list feeds both the deployment and its verification, so
+    // the Feed struct tuple can never drift from what was actually deployed.
+    const epochArgs = [
       tokenAddress,
       {
         aggregator: feedAddress,
@@ -226,13 +226,14 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
       BigInt(vaultConfig.epochDurationSec),
       BigInt(vaultConfig.auctionWindowSec),
       deployer.account.address,
-    ]);
+    ] as const;
+    const epochStrategy = await viem.deployContract("EpochStrategy", epochArgs);
     artifact.strategies[`${vaultConfig.symbol}-epoch`] = epochStrategy.address;
     console.log(`EpochStrategy(${vaultConfig.symbol}) -> ${epochStrategy.address}`);
     await verify(
       epochStrategy.address,
       `EpochStrategy-${vaultConfig.symbol}`,
-      [tokenAddress, feedAddress, vaultConfig.floorBps, vaultConfig.epochDurationSec, vaultConfig.auctionWindowSec, deployer.account.address],
+      [...epochArgs],
       "contracts/strategies/EpochStrategy.sol:EpochStrategy"
     );
 
@@ -346,20 +347,23 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
   writeFileSync(artifactPath, JSON.stringify(artifact, null, 2));
   console.log(`\nDeployment artifact -> ${artifactPath}`);
 
+  const verified = artifact.verification.filter((v) => v.status === "verified").length;
+  const skipped = artifact.verification.filter((v) => v.status === "skipped").length;
   const failed = artifact.verification.filter((v) => v.status === "failed");
   if (failed.length > 0) {
     console.log(`\nMANUAL VERIFICATION STILL NEEDED for ${failed.length} contract(s):`);
     for (const f of failed) console.log(`  ${f.name} at ${f.address}`);
-  } else {
-    console.log("\nAll contracts verified.");
+  }
+  console.log(`\nVerification: ${verified} verified, ${skipped} skipped (no explorer), ${failed.length} failed.`);
+  if (failed.length === 0 && skipped === 0) {
+    console.log("All contracts verified.");
+  } else if (failed.length === 0) {
+    console.log("Local run: verification skipped; nothing needs manual attention.");
   }
 
   return artifact;
 }
 
-// `hardhat run` imports this file instead of executing it, so argv[1] is
-// the hardhat binary and never this script. Detect the entry script in the
-// argument list; importing this module (as deploy-and-smoke does) stays quiet.
 if (
   process.argv.some((arg) => arg.endsWith("scripts/deploy.ts")) &&
   !process.argv.some((arg) => arg.endsWith("scripts/deploy-and-smoke.ts"))

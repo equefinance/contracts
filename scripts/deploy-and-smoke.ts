@@ -28,9 +28,11 @@ const token = await viem.getContractAt("MockB20", artifact.tokens[Object.keys(ar
 
 console.log(`\nSmoke test on ${vaultSymbol}`);
 
-// 1. Fund the depositor and deposit.
+// 1. Fund the depositor and deposit. The same wallet also places the demo
+// bid below, and bids escrow their premium immediately, so it needs one
+// extra token on top of the deposit.
 const depositor = deployer.account.address;
-await token.write.mint([depositor, 10n * 10n ** 18n]);
+await token.write.mint([depositor, 11n * 10n ** 18n]);
 await token.write.approve([vault.address, 10n * 10n ** 18n]);
 await vault.write.deposit([10n * 10n ** 18n, depositor]);
 console.log("deposit: 10 tokens ->", (await vault.read.balanceOf([depositor])).toString(), "shares");
