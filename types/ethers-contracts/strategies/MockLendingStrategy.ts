@@ -6,7 +6,7 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface MockLendingStrategyInterface extends Interface {
-    getFunction(nameOrSignature: "CURATOR_ROLE" | "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "KEEPER_ROLE" | "allocate" | "assetToken" | "depositedAt" | "getRoleAdmin" | "grantRole" | "harvest" | "hasRole" | "principal" | "renounceRole" | "revokeRole" | "setVault" | "supportsInterface" | "totalAssets" | "vault" | "withdraw"): FunctionFragment;
+    getFunction(nameOrSignature: "CURATOR_ROLE" | "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "KEEPER_ROLE" | "accruedYield" | "allocate" | "assetToken" | "depositedAt" | "getRoleAdmin" | "grantRole" | "harvest" | "hasRole" | "principal" | "renounceRole" | "revokeRole" | "setVault" | "supportsInterface" | "totalAssets" | "vault" | "withdraw"): FunctionFragment;
 
     getEvent(nameOrSignatureOrTopic: "RoleAdminChanged" | "RoleGranted" | "RoleRevoked"): EventFragment;
 
@@ -14,6 +14,7 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
 encodeFunctionData(functionFragment: 'DEFAULT_ADMIN_ROLE', values?: undefined): string;
 encodeFunctionData(functionFragment: 'GUARDIAN_ROLE', values?: undefined): string;
 encodeFunctionData(functionFragment: 'KEEPER_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'accruedYield', values?: undefined): string;
 encodeFunctionData(functionFragment: 'allocate', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'assetToken', values?: undefined): string;
 encodeFunctionData(functionFragment: 'depositedAt', values?: undefined): string;
@@ -34,6 +35,7 @@ encodeFunctionData(functionFragment: 'withdraw', values: [BigNumberish]): string
 decodeFunctionResult(functionFragment: 'DEFAULT_ADMIN_ROLE', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'GUARDIAN_ROLE', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'KEEPER_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'accruedYield', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'allocate', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'assetToken', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'depositedAt', data: BytesLike): Result;
@@ -149,6 +151,14 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     KEEPER_ROLE: TypedContractMethod<
       [],
       [string],
+      'view'
+    >
+    
+
+    
+    accruedYield: TypedContractMethod<
+      [],
+      [bigint],
       'view'
     >
     
@@ -294,6 +304,11 @@ getFunction(nameOrSignature: 'GUARDIAN_ROLE'): TypedContractMethod<
 getFunction(nameOrSignature: 'KEEPER_ROLE'): TypedContractMethod<
       [],
       [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'accruedYield'): TypedContractMethod<
+      [],
+      [bigint],
       'view'
     >;
 getFunction(nameOrSignature: 'allocate'): TypedContractMethod<

@@ -33,9 +33,16 @@ contract MockLendingStrategy is EqueAccess, IStrategy {
         vault = vault_;
     }
 
+    /// Realizable only: the tokens this strategy can actually hand back.
+    /// The accrued mock yield is reported separately so accounting never
+    /// counts value the strategy cannot transfer.
     function totalAssets() external view returns (uint256) {
+        return principal;
+    }
+
+    function accruedYield() external view returns (uint256) {
         if (principal == 0) return 0;
-        return principal + (principal * 2 * (block.timestamp - depositedAt)) / 100 / 365 days;
+        return (principal * 2 * (block.timestamp - depositedAt)) / 100 / 365 days;
     }
 
     function allocate(uint256 assets) external {
@@ -46,9 +53,7 @@ contract MockLendingStrategy is EqueAccess, IStrategy {
 
     function withdraw(uint256 assets) external returns (uint256) {
         if (msg.sender != vault && !hasRole(KEEPER_ROLE, msg.sender)) revert Errors.NotVault();
-        uint256 available = this.totalAssets();
-        uint256 take = assets > available ? available : assets;
-        if (take > principal) take = principal;
+        uint256 take = assets > principal ? principal : assets;
         principal -= take;
         assetToken.safeTransfer(msg.sender, take);
         return take;

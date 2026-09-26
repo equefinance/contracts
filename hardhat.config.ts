@@ -49,11 +49,12 @@ export default defineConfig({
       type: "edr-simulated",
       chainType: "op",
     },
-    tenderlyFork: {
+    tenderly: {
       type: "http",
       chainType: "generic",
       url: configVariable("TENDERLY_FORK_RPC"),
       accounts: [configVariable("DEPLOYER_PRIVATE_KEY")],
+      chainId: 1524,
     },
     "robinhood-testnet": {
       type: "http",

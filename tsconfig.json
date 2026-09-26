@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
-    "lib": ["es2023"],
+    "lib": [
+      "es2024"
+    ],
     "module": "node20",
     "target": "es2023",
     "skipLibCheck": true,
     "outDir": "dist",
-    "types": ["node"],
-    "verbatimModuleSyntax": true
+    "types": [
+      "node"
+    ],
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true
   }
 }

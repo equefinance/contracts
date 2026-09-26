@@ -264,6 +264,18 @@ contract EqueVault is IERC20, IERC4626, IEqueVault, ERC20, AccessControl, Pausab
         assets = previewRedeem(pending);
         if (assets > freeAssets()) revert Errors.EpochLockedForWithdraw();
 
+        // Strategies hold most of the book; pull the payout slice back
+        // before paying. Post-settle the epoch leg is liquid too, so both
+        // strategies serve the withdrawal in registry order.
+        uint256 buffer = _underlying.balanceOf(address(this));
+        if (buffer < assets) {
+            (address[] memory strategies, ) = router_.strategyHoldings(address(this));
+            for (uint256 i; i < strategies.length && buffer < assets; i++) {
+                uint256 shortfall = assets - buffer;
+                buffer += IStrategy(strategies[i]).withdraw(shortfall);
+            }
+        }
+
         _burn(address(this), pending);
 
         uint256 fee = Math.mulDiv(assets, withdrawFeeBps, 10_000);
