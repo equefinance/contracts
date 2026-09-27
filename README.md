@@ -10,6 +10,30 @@ shareholders.
 A deterministic onchain router moves funds between the epoch
 strategy and a lending strategy toward curator-set target weights.
 
+## Eque Demo workflow
+
+```md
+== smoke test evNVDA on robinhood testnet ==
+vault:    0xd86e58E4F80bb0F83432EAf309F02332EeB80AF6
+strategy: 0xbf2332f1610671f9b9082430ab3cab6ad84fc153
+keeper:   0x00000AC095ab728FeeBef880A3D4801f71732808
+feed fresh (19545s old)
+faucet: 0x00000AC095ab728FeeBef880A3D4801f71732808 already claimed, skipping (cooldown until 1790490141)
+faucet: 0xf30aA18252c3c56339b08Aeb30A884F13CfcF204 already claimed, skipping (cooldown until 1790490145)
+faucet: 0xa11361a68f63d79711a43CcC272b36F34C01620C claimed 10 NVDA
+deposit: 10 NVDA -> 10000000000000000000 shares (depositor started with 1000010.000000000000000000)
+allocate: strategy holds 7000000000000000000
+epoch started (state=Auction)
+bot1 bid 0.1
+bot2 outbid 0.15 (bot1 auto-refunded)
+waiting 330s for auction to end...
+auction closed (state=Locked)
+waiting 330s for epoch expiry...
+settled (state=Settled), strategy holds 7150000000000000000
+depositor: 1000010.000000000000000000 -> 1000010.149999999999999999 NVDA
+
+```
+
 ## Install
 
 ```
