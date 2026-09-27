@@ -1,18 +1,19 @@
 {
+  "chainId": 46630,
   "vaults": [
     {
-      "symbol": "eNVDA",
-      "shareTokenName": "Eque NVDA",
+      "symbol": "evNVDA",
+      "shareTokenName": "NVDA EqVault",
       "underlying": {
         "symbol": "NVDA",
-        "name": "NVIDIA Corporation Tokenized Stock",
+        "name": "NVIDIA Corporation",
         "decimals": 18
       },
       "underlyingSource": "MockStocks",
       "oracle": {
         "decimals": 8,
-        "initialPrice": "18000000000",
-        "heartbeatSec": 3600,
+        "initialPrice": "23100000000",
+        "heartbeatSec": 21600,
         "stalenessBufferSec": 300
       },
       "strikeBps": 10500,
@@ -33,18 +34,18 @@
       "lendingStrategy": "MockLendingStrategy"
     },
     {
-      "symbol": "eAAPL",
-      "shareTokenName": "Eque AAPL",
+      "symbol": "evAAPL",
+      "shareTokenName": "AAPL EqVault",
       "underlying": {
         "symbol": "AAPL",
-        "name": "Apple Inc. Tokenized Stock",
+        "name": "Apple Inc.",
         "decimals": 18
       },
       "underlyingSource": "MockStocks",
       "oracle": {
         "decimals": 8,
-        "initialPrice": "24000000000",
-        "heartbeatSec": 3600,
+        "initialPrice": "35100000000",
+        "heartbeatSec": 21600,
         "stalenessBufferSec": 300
       },
       "strikeBps": 10500,

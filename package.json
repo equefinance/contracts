@@ -1,7 +1,40 @@
 {
-  "name": "eque-contracts",
+  "name": "@eque/contracts",
   "version": "1.0.0",
+  "description": "Eque protocol smart contracts",
+  "keywords": [
+    "Solidity"
+  ],
+  "homepage": "https://github.com/equefinance/contracts#readme",
+  "bugs": {
+    "url": "https://github.com/equefinance/contracts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/equefinance/contracts.git"
+  },
+  "license": "MIT",
+  "author": "limalime",
   "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "hardhat test solidity",
+    "test:node": "hardhat test nodejs",
+    "build": "hardhat build",
+    "compile": "npm run build",
+    "build:solx": "hardhat build --build-profile slang-solx",
+    "deploy:local": "hardhat run scripts/deploy.ts --network hardhatMainnet",
+    "deploy:fork": "hardhat run scripts/deploy.ts --network hardhatFork",
+    "deploy:base": "hardhat run scripts/deploy.ts --network base-sepolia",
+    "deploy:robinhood": "hardhat run scripts/deploy.ts --network robinhood-testnet",
+    "smoke:local": "hardhat run scripts/deploy-and-smoke.ts --network hardhatMainnet"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^1.5.0",
+    "@openzeppelin/contracts": "^5.6.1"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^3.1.8",
     "@nomicfoundation/hardhat-slang-solx": "^3.0.4",
@@ -12,9 +45,5 @@
     "hardhat": "^3.18.0",
     "typescript": "~6.0.3",
     "viem": "^2.56.9"
-  },
-  "dependencies": {
-    "@chainlink/contracts": "^1.5.0",
-    "@openzeppelin/contracts": "^5.6.1"
   }
 }

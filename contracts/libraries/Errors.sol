@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
 /// @notice Custom errors shared across Eque contracts. Declared in one library

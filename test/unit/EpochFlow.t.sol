@@ -12,6 +12,7 @@ import {MockB20} from "../../contracts/mocks/MockB20.sol";
 import {MockV3Aggregator} from "../../contracts/oracle/MockV3Aggregator.sol";
 import {OracleGuard} from "../../contracts/oracle/OracleGuard.sol";
 import {Errors} from "../../contracts/libraries/Errors.sol";
+import {IEpochStrategy} from "../../contracts/interfaces/IEpochStrategy.sol";
 
 /// Full-stack flow: factory deploys vault wired to a real EpochStrategy and a
 /// MockLendingStrategy; a depositor enters, the keeper allocates and runs a
@@ -175,6 +176,46 @@ contract EpochFlowTest is Test {
         vm.prank(depositor);
         vm.expectRevert(abi.encodeWithSelector(Errors.RedeemNotReady.selector, readyAt));
         vault.claim();
+    }
+
+    function test_MidEpochDepositStaysInBufferUntilBoundary() public {
+        vm.startPrank(depositor);
+        token.approve(address(vault), 15 ether);
+        vault.deposit(10 ether, depositor);
+        vm.stopPrank();
+        vm.prank(keeper);
+        vault.allocate();
+
+        // Run the epoch into its locked phase.
+        vm.prank(keeper);
+        epochStrategy.startEpoch(false);
+        vm.warp(block.timestamp + WINDOW + 1);
+        vm.prank(keeper);
+        epochStrategy.closeAuction();
+
+        // A mid-epoch deposit sits in the buffer; the epoch is untouched.
+        vm.prank(depositor);
+        vault.deposit(5 ether, depositor);
+        assertEq(token.balanceOf(address(vault)), 5 ether);
+        assertEq(vault.lockedAssets(), 7 ether);
+        assertEq(vault.freeAssets(), 8 ether); // buffer 5 plus lending 3
+
+        // Allocation is refused mid-epoch: the vault reverts on the strategy
+        // leg and the whole call rolls back, so nothing moves.
+        vm.prank(keeper);
+        vm.expectRevert(IEpochStrategy.AuctionNotOpen.selector);
+        vault.allocate();
+        assertEq(token.balanceOf(address(vault)), 5 ether);
+        assertEq(epochStrategy.totalAssets(), 7 ether);
+
+        // After settlement the boundary opens and the buffer is allocated.
+        vm.warp(block.timestamp + EPOCH + 1);
+        vm.prank(keeper);
+        epochStrategy.settleEpoch();
+        vm.prank(keeper);
+        vault.allocate();
+        assertEq(epochStrategy.totalAssets(), 10.5 ether); // 70% of 15
+        assertEq(lendingStrategy.totalAssets(), 4.5 ether);
     }
 
     function test_RebalancePullsFromLendingOnlyMidEpoch() public {

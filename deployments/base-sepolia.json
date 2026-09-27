@@ -1,0 +1,89 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "deployedAt": "2026-09-26T23:19:53.265Z",
+  "deployer": "0x00000ac095ab728feebef880a3d4801f71732808",
+  "tokens": {
+    "TSLAc": "0x8be90fd1f33b4c5824d409068d23a10e3dde86d0",
+    "METAc": "0x7a82bdaee207b0c637c9c9bf44efaffed1ca9bfc"
+  },
+  "feeds": {
+    "TSLAc": "0xbf2332f1610671f9b9082430ab3cab6ad84fc153",
+    "METAc": "0xb3df53449c17ba2bc3155059b6443f8b6dc720d6"
+  },
+  "strategies": {
+    "evTSLA-epoch": "0x11152f434124de3bdda81df38ba3f64dea825d0e",
+    "evTSLA-lending": "0x8f4152f9e9ba54a4d00b532700916c3579334caf",
+    "evMETA-epoch": "0x7f797deae16656d6505c486a9fbbdf1ec25cbb33",
+    "evMETA-lending": "0x087c107224c1d3213297275bf0eac6b726a6fff9"
+  },
+  "vaults": {
+    "evTSLA": "0x9Bae360A732582F99b7Ebed0E90262Ee23f2fA20",
+    "evMETA": "0xD33EBF3b6a961541e6EceDa80167fa58E2534156"
+  },
+  "router": "0xa3D9c555A8C80B2Eca27895779933CaD2f390b55",
+  "factory": "0xfc7541f4051c13d19f7d5b9f43c3d1a520e35813",
+  "faucet": "0xe04f91e4cc6710e3232e59922c7e662a697bbc60",
+  "verification": [
+    {
+      "address": "0xbf2332f1610671f9b9082430ab3cab6ad84fc153",
+      "name": "MockV3Aggregator-TSLAc",
+      "status": "failed"
+    },
+    {
+      "address": "0x8be90fd1f33b4c5824d409068d23a10e3dde86d0",
+      "name": "MockB20-TSLAc",
+      "status": "failed"
+    },
+    {
+      "address": "0xb3df53449c17ba2bc3155059b6443f8b6dc720d6",
+      "name": "MockV3Aggregator-METAc",
+      "status": "failed"
+    },
+    {
+      "address": "0x7a82bdaee207b0c637c9c9bf44efaffed1ca9bfc",
+      "name": "MockB20-METAc",
+      "status": "failed"
+    },
+    {
+      "address": "0xfc7541f4051c13d19f7d5b9f43c3d1a520e35813",
+      "name": "EqueVaultFactory",
+      "status": "failed"
+    },
+    {
+      "address": "0xa3D9c555A8C80B2Eca27895779933CaD2f390b55",
+      "name": "EqueRouter",
+      "status": "failed"
+    },
+    {
+      "address": "0x2F0505E437eab9C9D5eff2c63Bc1805e063cA077",
+      "name": "EqueVault(implementation)",
+      "status": "failed"
+    },
+    {
+      "address": "0x11152f434124de3bdda81df38ba3f64dea825d0e",
+      "name": "EpochStrategy-evTSLA",
+      "status": "failed"
+    },
+    {
+      "address": "0x8f4152f9e9ba54a4d00b532700916c3579334caf",
+      "name": "MockLendingStrategy-evTSLA",
+      "status": "failed"
+    },
+    {
+      "address": "0x7f797deae16656d6505c486a9fbbdf1ec25cbb33",
+      "name": "EpochStrategy-evMETA",
+      "status": "failed"
+    },
+    {
+      "address": "0x087c107224c1d3213297275bf0eac6b726a6fff9",
+      "name": "MockLendingStrategy-evMETA",
+      "status": "failed"
+    },
+    {
+      "address": "0xe04f91e4cc6710e3232e59922c7e662a697bbc60",
+      "name": "TestnetFaucet",
+      "status": "failed"
+    }
+  ]
+}

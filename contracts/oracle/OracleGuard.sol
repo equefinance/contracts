@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
@@ -81,15 +81,16 @@ library OracleGuard {
 
     function _checkSequencer(AggregatorV3Interface sequencerFeed) private view {
         if (address(sequencerFeed) == address(0)) revert Errors.OracleUnavailable();
-        // The sequencer-uptime feed answers 1 while up and 0 while down; a
-        // fresh positive answer plus the grace period is the accepted state.
+        // Chainlink's L2 uptime feed answers 0 while the sequencer is up and
+        // 1 while it is down; reads are refused until the grace period after
+        // recovery has passed.
         (, int256 answer, , uint256 updatedAt, ) = sequencerFeed.latestRoundData();
-        if (answer <= 0) revert Errors.SequencerDown();
+        if (answer != 0) revert Errors.SequencerDown();
         if (block.timestamp - updatedAt < SEQ_GRACE_PERIOD) revert Errors.SequencerDown();
     }
 
     function requireMarketHours() internal view {
-        uint256 day = (block.timestamp / 1 days + 4) % 7; // 0 = Thursday epoch time
+        uint256 day = (block.timestamp / 1 days + 4) % 7; // 0 = Sunday
         if (day == 0 || day == 6) revert Errors.MarketClosed(day, (block.timestamp % 1 days));
         uint256 timeOfDay = block.timestamp % 1 days;
         if (timeOfDay < MARKET_OPEN || timeOfDay >= MARKET_CLOSE) {

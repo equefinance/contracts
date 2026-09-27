@@ -1,25 +1,25 @@
 {
-  "network": "hardhatFork",
-  "chainId": 31337,
-  "deployedAt": "2026-09-26T21:40:17.688Z",
+  "network": "robinhood-testnet",
+  "chainId": 46630,
+  "deployedAt": "2026-09-27T00:04:06.848Z",
   "deployer": "0x00000ac095ab728feebef880a3d4801f71732808",
   "tokens": {
-    "TSLAc": "0x0d31781f1b51842bbcf527cc2cc38d40bd30c860",
-    "METAc": "0xeb437a720225a8939fc5b1fe471088d05cd4c12f"
+    "NVDA": "0x0d31781f1b51842bbcf527cc2cc38d40bd30c860",
+    "AAPL": "0xeb437a720225a8939fc5b1fe471088d05cd4c12f"
   },
   "feeds": {
-    "TSLAc": "0x8ea0e0fbe6e0d60a9008485dcc70d5c02fa67e0a",
-    "METAc": "0x1487255c64909be8a23629678cbf8c6036e3f417"
+    "NVDA": "0x8ea0e0fbe6e0d60a9008485dcc70d5c02fa67e0a",
+    "AAPL": "0x1487255c64909be8a23629678cbf8c6036e3f417"
   },
   "strategies": {
-    "evTSLA-epoch": "0xbf2332f1610671f9b9082430ab3cab6ad84fc153",
-    "evTSLA-lending": "0x8be90fd1f33b4c5824d409068d23a10e3dde86d0",
-    "evMETA-epoch": "0xbd71d69e65043828524bb2e67be257da6efd0290",
-    "evMETA-lending": "0xaf19f70201a1f886c224a548ee48d5b2b5559b3d"
+    "evNVDA-epoch": "0xbf2332f1610671f9b9082430ab3cab6ad84fc153",
+    "evNVDA-lending": "0x8be90fd1f33b4c5824d409068d23a10e3dde86d0",
+    "evAAPL-epoch": "0xbd71d69e65043828524bb2e67be257da6efd0290",
+    "evAAPL-lending": "0xaf19f70201a1f886c224a548ee48d5b2b5559b3d"
   },
   "vaults": {
-    "evTSLA": "0xd86e58E4F80bb0F83432EAf309F02332EeB80AF6",
-    "evMETA": "0x82e6443f74C9817c1A7AF69884afc08f5e9aE0a0"
+    "evNVDA": "0xd86e58E4F80bb0F83432EAf309F02332EeB80AF6",
+    "evAAPL": "0x82e6443f74C9817c1A7AF69884afc08f5e9aE0a0"
   },
   "router": "0xa9C3B0228AF282A4cdD7383c74A2Ce9Af7541E42",
   "factory": "0x4a960a6807951a678550afb1aecca82247e289a8",
@@ -27,63 +27,63 @@
   "verification": [
     {
       "address": "0x8ea0e0fbe6e0d60a9008485dcc70d5c02fa67e0a",
-      "name": "MockV3Aggregator-TSLAc",
-      "status": "skipped"
+      "name": "MockV3Aggregator-NVDA",
+      "status": "verified"
     },
     {
       "address": "0x0d31781f1b51842bbcf527cc2cc38d40bd30c860",
-      "name": "MockB20-TSLAc",
-      "status": "skipped"
+      "name": "MockStocks-NVDA",
+      "status": "verified"
     },
     {
       "address": "0x1487255c64909be8a23629678cbf8c6036e3f417",
-      "name": "MockV3Aggregator-METAc",
-      "status": "skipped"
+      "name": "MockV3Aggregator-AAPL",
+      "status": "verified"
     },
     {
       "address": "0xeb437a720225a8939fc5b1fe471088d05cd4c12f",
-      "name": "MockB20-METAc",
-      "status": "skipped"
+      "name": "MockStocks-AAPL",
+      "status": "verified"
     },
     {
       "address": "0x4a960a6807951a678550afb1aecca82247e289a8",
       "name": "EqueVaultFactory",
-      "status": "skipped"
+      "status": "verified"
     },
     {
       "address": "0xa9C3B0228AF282A4cdD7383c74A2Ce9Af7541E42",
       "name": "EqueRouter",
-      "status": "skipped"
+      "status": "verified"
     },
     {
       "address": "0x4920f220bd197908E54E1077a68e00C91a3501d5",
       "name": "EqueVault(implementation)",
-      "status": "skipped"
+      "status": "verified"
     },
     {
       "address": "0xbf2332f1610671f9b9082430ab3cab6ad84fc153",
-      "name": "EpochStrategy-evTSLA",
-      "status": "skipped"
+      "name": "EpochStrategy-evNVDA",
+      "status": "verified"
     },
     {
       "address": "0x8be90fd1f33b4c5824d409068d23a10e3dde86d0",
-      "name": "MockLendingStrategy-evTSLA",
-      "status": "skipped"
+      "name": "MockLendingStrategy-evNVDA",
+      "status": "verified"
     },
     {
       "address": "0xbd71d69e65043828524bb2e67be257da6efd0290",
-      "name": "EpochStrategy-evMETA",
-      "status": "skipped"
+      "name": "EpochStrategy-evAAPL",
+      "status": "verified"
     },
     {
       "address": "0xaf19f70201a1f886c224a548ee48d5b2b5559b3d",
-      "name": "MockLendingStrategy-evMETA",
-      "status": "skipped"
+      "name": "MockLendingStrategy-evAAPL",
+      "status": "verified"
     },
     {
       "address": "0xc2ec5d2905b22e7dec50b20807df91e1953d7b48",
       "name": "TestnetFaucet",
-      "status": "skipped"
+      "status": "verified"
     }
   ]
 }

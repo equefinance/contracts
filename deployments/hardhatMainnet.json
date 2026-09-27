@@ -1,7 +1,7 @@
 {
   "network": "hardhatMainnet",
   "chainId": 31337,
-  "deployedAt": "2026-09-26T17:53:43.561Z",
+  "deployedAt": "2026-09-26T22:58:07.527Z",
   "deployer": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
   "tokens": {
     "TSLAc": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
@@ -12,14 +12,14 @@
     "METAc": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0"
   },
   "strategies": {
-    "eTSLA-epoch": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
-    "eTSLA-lending": "0x0165878a594ca255338adfa4d48449f69242eb8f",
-    "eMETA-epoch": "0x0dcd1bf9a1b36ce34237eeafef220932846bcd82",
-    "eMETA-lending": "0x9a676e781a523b5d0c0e43731313a708cb607508"
+    "evTSLA-epoch": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+    "evTSLA-lending": "0x0165878a594ca255338adfa4d48449f69242eb8f",
+    "evMETA-epoch": "0x0dcd1bf9a1b36ce34237eeafef220932846bcd82",
+    "evMETA-lending": "0x9a676e781a523b5d0c0e43731313a708cb607508"
   },
   "vaults": {
-    "eTSLA": "0x3dE2Da43d4c1B137E385F36b400507c1A24401f8",
-    "eMETA": "0xddEA3d67503164326F90F53CFD1705b90Ed1312D"
+    "evTSLA": "0x3dE2Da43d4c1B137E385F36b400507c1A24401f8",
+    "evMETA": "0xddEA3d67503164326F90F53CFD1705b90Ed1312D"
   },
   "router": "0xb0279Db6a2F1E01fbC8483FCCef0Be2bC6299cC3",
   "factory": "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9",
@@ -62,22 +62,22 @@
     },
     {
       "address": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
-      "name": "EpochStrategy-eTSLA",
+      "name": "EpochStrategy-evTSLA",
       "status": "skipped"
     },
     {
       "address": "0x0165878a594ca255338adfa4d48449f69242eb8f",
-      "name": "MockLendingStrategy-eTSLA",
+      "name": "MockLendingStrategy-evTSLA",
       "status": "skipped"
     },
     {
       "address": "0x0dcd1bf9a1b36ce34237eeafef220932846bcd82",
-      "name": "EpochStrategy-eMETA",
+      "name": "EpochStrategy-evMETA",
       "status": "skipped"
     },
     {
       "address": "0x9a676e781a523b5d0c0e43731313a708cb607508",
-      "name": "MockLendingStrategy-eMETA",
+      "name": "MockLendingStrategy-evMETA",
       "status": "skipped"
     },
     {

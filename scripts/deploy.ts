@@ -38,6 +38,7 @@ type VaultConfig = {
 };
 
 type ChainConfig = {
+  chainId?: number | string;
   vaults: VaultConfig[];
   lendingStrategyFallback: string;
 };
@@ -64,6 +65,29 @@ const LOCAL_NETWORKS = ["hardhatMainnet", "hardhatOp", "hardhatFork", "tenderly"
 
 type Connection = Awaited<ReturnType<typeof network.create>>;
 
+// Pacing knobs: public RPCs and Blockscout rate-limit aggressively, so the
+// script spreads its calls out. Override through the environment when a slow
+// or fast run is wanted; the defaults suit the public testnets.
+function envMs(name: string, fallback: number): number {
+  const raw = process.env[name];
+  if (raw === undefined || raw === "") return fallback;
+  const value = Number(raw);
+  return Number.isFinite(value) && value >= 0 ? value : fallback;
+}
+
+const VERIFY_DELAY_MS = envMs("VERIFY_DELAY_MS", 20_000);
+const DEPLOY_TX_DELAY_MS = envMs("DEPLOY_TX_DELAY_MS", 10_000);
+const VERIFY_PACE_MS = 5_000;
+const READ_RETRY_DELAY_MS = 4_000;
+const READ_ATTEMPTS = 5;
+const VERIFY_ATTEMPTS = 3;
+
+function sleep(ms: number): Promise<void> {
+  const { promise, resolve } = Promise.withResolvers<void>();
+  setTimeout(resolve, ms);
+  return promise;
+}
+
 export async function deployMain(connection?: Connection): Promise<Deployed> {
   const conn = connection ?? (await network.create());
   const { viem } = conn;
@@ -76,7 +100,37 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
 
   const publicClient = await viem.getPublicClient();
   const [deployer] = await viem.getWalletClients();
-  const chainId = await publicClient.getChainId();
+
+  // A transient RPC failure must never kill a deploy that already spent gas,
+  // so every onchain read goes through a few retries before giving up.
+  async function readWithRetry<T>(label: string, read: () => Promise<T>): Promise<T> {
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= READ_ATTEMPTS; attempt++) {
+      try {
+        return await read();
+      } catch (err) {
+        lastError = err;
+        console.warn(`  ${label} attempt ${attempt} failed: ${(err as Error).message}`);
+        if (attempt < READ_ATTEMPTS) await sleep(READ_RETRY_DELAY_MS);
+      }
+    }
+    throw lastError;
+  }
+
+  const chainId = await readWithRetry("getChainId", () => publicClient.getChainId());
+
+  // Fail fast on a wrong RPC: the config names the chain this run targets and
+  // every transaction below would otherwise land somewhere unexpected. Local
+  // simulations and rehearsal forks legitimately use their own chain ids.
+  if (
+    !LOCAL_NETWORKS.includes(networkId) &&
+    config.chainId !== undefined &&
+    BigInt(config.chainId) !== BigInt(chainId)
+  ) {
+    throw new Error(
+      `Connected chain id ${chainId} does not match the ${networkId} config chain id ${config.chainId}; refusing to deploy.`
+    );
+  }
 
   const artifact: Deployed = {
     network: networkId,
@@ -97,27 +151,27 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
   const feeRecipient = (process.env.FEE_RECIPIENT_ADDRESS ?? deployer.account.address) as `0x${string}`;
 
   async function verify(address: string, name: string, constructorArgs: unknown[], contractFqn: string) {
-    // No explorer exists for a local chain or a rehearsal fork, so those runs
-    // record an honest skip instead of claiming a verification that never
-    // ran. Real networks do the full round.
     if (LOCAL_NETWORKS.includes(networkId)) {
       artifact.verification.push({ address, name, status: "skipped" });
       return;
     }
-    for (let attempt = 1; attempt <= 2; attempt++) {
+    for (let attempt = 1; attempt <= VERIFY_ATTEMPTS; attempt++) {
       try {
-        await verifyContract({ address, constructorArgs, contract: contractFqn }, hre);
+        await verifyContract({ address, constructorArgs, contract: contractFqn, provider: "blockscout" }, hre);
         artifact.verification.push({ address, name, status: "verified" });
         console.log(`  verified ${name} at ${address}`);
+        // Pace the explorer so a long deploy does not trip its rate limits.
+        await sleep(VERIFY_PACE_MS);
         return;
       } catch (err) {
-        console.warn(`  verification attempt ${attempt} failed for ${name}: ${(err as Error).message}`);
-        if (attempt === 2) {
+        const message = (err as Error).message;
+        console.warn(`  verification attempt ${attempt} failed for ${name}: ${message}`);
+        if (attempt === VERIFY_ATTEMPTS) {
           artifact.verification.push({ address, name, status: "failed" });
         } else {
-          const { promise, resolve: wake } = Promise.withResolvers<void>();
-          setTimeout(wake, 5000);
-          await promise;
+          // Blockscout answers 429 when pushed; back off harder on those.
+          const wait = message.includes("429") ? VERIFY_DELAY_MS * 3 : VERIFY_DELAY_MS;
+          await sleep(wait);
         }
       }
     }
@@ -128,11 +182,12 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
       try {
         const hash = await send();
         await publicClient.waitForTransactionReceipt({ hash });
+        await sleep(DEPLOY_TX_DELAY_MS);
         return;
       } catch (err) {
         console.warn(`  ${label} attempt ${attempt} failed: ${(err as Error).message}`);
         if (attempt === 2) throw err;
-        await new Promise((wake) => setTimeout(wake, 5000));
+        await sleep(5_000);
       }
     }
   }
@@ -143,6 +198,7 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
   // 1. Oracle and token mocks.
   for (const vaultConfig of config.vaults) {
     const feed = await viem.deployContract("MockV3Aggregator", [keeper, BigInt(vaultConfig.oracle.initialPrice)]);
+    await sleep(DEPLOY_TX_DELAY_MS);
     artifact.feeds[vaultConfig.underlying.symbol] = feed.address;
     console.log(`MockV3Aggregator(${vaultConfig.underlying.symbol}) -> ${feed.address}`);
     await verify(
@@ -159,6 +215,7 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
         "Eque testnet",
         deployer.account.address,
       ]);
+      await sleep(DEPLOY_TX_DELAY_MS);
       artifact.tokens[vaultConfig.underlying.symbol] = token.address;
       console.log(`MockStocks(${vaultConfig.underlying.symbol}) -> ${token.address}`);
       await verify(
@@ -173,6 +230,7 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
         vaultConfig.underlying.symbol,
         deployer.account.address,
       ]);
+      await sleep(DEPLOY_TX_DELAY_MS);
       artifact.tokens[vaultConfig.underlying.symbol] = token.address;
       console.log(`MockB20(${vaultConfig.underlying.symbol}) -> ${token.address}`);
       await verify(
@@ -188,17 +246,18 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
 
   // 2. Factory (deploys router + vault implementation), then per-vault clones.
   const factory = await viem.deployContract("EqueVaultFactory", [deployer.account.address]);
+  await sleep(DEPLOY_TX_DELAY_MS);
   artifact.factory = factory.address;
-  const routerAddress = await factory.read.router();
+  const routerAddress = await readWithRetry("factory.read.router", () => factory.read.router());
   artifact.router = routerAddress;
   console.log(`EqueVaultFactory -> ${factory.address}`);
   console.log(`EqueRouter      -> ${routerAddress}`);
   await verify(factory.address, "EqueVaultFactory", [deployer.account.address], "contracts/core/EqueVaultFactory.sol:EqueVaultFactory");
   await verify(routerAddress, "EqueRouter", [deployer.account.address, factory.address], "contracts/core/EqueRouter.sol:EqueRouter");
 
-  // Vault clones point at this implementation; without verifying it, every
-  // vault shows as an unverified proxy on the explorer.
-  const vaultImplementation = await factory.read.vaultImplementation();
+  const vaultImplementation = await readWithRetry("factory.read.vaultImplementation", () =>
+    factory.read.vaultImplementation()
+  );
   console.log(`EqueVault implementation -> ${vaultImplementation}`);
   await verify(vaultImplementation, "EqueVault(implementation)", [], "contracts/core/EqueVault.sol:EqueVault");
 
@@ -208,8 +267,6 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
     const tokenAddress = artifact.tokens[vaultConfig.underlying.symbol]!;
     const feedAddress = artifact.feeds[vaultConfig.underlying.symbol]!;
 
-    // One argument list feeds both the deployment and its verification, so
-    // the Feed struct tuple can never drift from what was actually deployed.
     const epochArgs = [
       tokenAddress,
       {
@@ -228,6 +285,7 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
       deployer.account.address,
     ] as const;
     const epochStrategy = await viem.deployContract("EpochStrategy", epochArgs);
+    await sleep(DEPLOY_TX_DELAY_MS);
     artifact.strategies[`${vaultConfig.symbol}-epoch`] = epochStrategy.address;
     console.log(`EpochStrategy(${vaultConfig.symbol}) -> ${epochStrategy.address}`);
     await verify(
@@ -238,6 +296,7 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
     );
 
     const lending = await viem.deployContract(vaultConfig.lendingStrategy, [tokenAddress, deployer.account.address]);
+    await sleep(DEPLOY_TX_DELAY_MS);
     artifact.strategies[`${vaultConfig.symbol}-lending`] = lending.address;
     console.log(`${vaultConfig.lendingStrategy}(${vaultConfig.symbol}) -> ${lending.address}`);
     await verify(
@@ -266,13 +325,16 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
       },
     ]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash: deployTx });
-    const logs = await publicClient.getContractEvents({
-      address: factory.address,
-      abi: factory.abi,
-      eventName: "VaultDeployed",
-      fromBlock: receipt.blockNumber,
-      toBlock: receipt.blockNumber,
-    });
+    await sleep(DEPLOY_TX_DELAY_MS);
+    const logs = await readWithRetry("getContractEvents(VaultDeployed)", () =>
+      publicClient.getContractEvents({
+        address: factory.address,
+        abi: factory.abi,
+        eventName: "VaultDeployed",
+        fromBlock: receipt.blockNumber,
+        toBlock: receipt.blockNumber,
+      })
+    );
     const vaultAddress = logs[0]!.args.vault as `0x${string}`;
 
     const vaultClone = await viem.getContractAt("EqueVault", vaultAddress);
@@ -288,15 +350,17 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
     );
 
     // Roles: keeper runs epochs and allocations; deployer holds curation.
-    const keeperRole = await vaultClone.read.KEEPER_ROLE();
+    const keeperRole = await readWithRetry("vault.read.KEEPER_ROLE", () => vaultClone.read.KEEPER_ROLE());
     await writeWithRetry(`grantRole(keeper, ${vaultConfig.symbol})`, () =>
       vaultClone.write.grantRole([keeperRole, keeper]),
     );
-    const vaultCuratorRole = await vaultClone.read.CURATOR_ROLE();
+    const vaultCuratorRole = await readWithRetry("vault.read.CURATOR_ROLE", () => vaultClone.read.CURATOR_ROLE());
     await writeWithRetry(`grantRole(curator, ${vaultConfig.symbol})`, () =>
       vaultClone.write.grantRole([vaultCuratorRole, deployer.account.address]),
     );
-    const strategyKeeperRole = await epochStrategy.read.KEEPER_ROLE();
+    const strategyKeeperRole = await readWithRetry("epochStrategy.read.KEEPER_ROLE", () =>
+      epochStrategy.read.KEEPER_ROLE()
+    );
     await writeWithRetry(`grantRole(strategy keeper, ${vaultConfig.symbol})`, () =>
       epochStrategy.write.grantRole([strategyKeeperRole, keeper]),
     );
@@ -305,7 +369,7 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
   }
 
   // Router keeper grant for rebalance calls.
-  const routerKeeperRole = await router.read.KEEPER_ROLE();
+  const routerKeeperRole = await readWithRetry("router.read.KEEPER_ROLE", () => router.read.KEEPER_ROLE());
   await writeWithRetry("grantRole(router keeper)", () => router.write.grantRole([routerKeeperRole, keeper]));
 
   // 3. Faucet over the first token pair.
@@ -315,6 +379,7 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
     artifact.tokens[first.underlying.symbol]!,
     artifact.tokens[second.underlying.symbol]!,
   ]);
+  await sleep(DEPLOY_TX_DELAY_MS);
   artifact.faucet = faucet.address;
   console.log(`TestnetFaucet -> ${faucet.address}`);
   await verify(
@@ -327,17 +392,17 @@ export async function deployMain(connection?: Connection): Promise<Deployed> {
   // Fund the faucet so testers can unblock themselves immediately.
   const firstToken = await viem.getContractAt("MockStocks", artifact.tokens[first.underlying.symbol]!);
   await writeWithRetry("mint(faucet, first)", () =>
-    firstToken.write.mint([faucet.address, 1_000_000n * 10n ** 18n]),
+    firstToken.write.mint([faucet.address, 100_000_000n * 10n ** 18n]),
   );
   if (second.underlyingSource === "MockStocks") {
     const secondStocks = await viem.getContractAt("MockStocks", artifact.tokens[second.underlying.symbol]!);
     await writeWithRetry("mint(faucet, second)", () =>
-      secondStocks.write.mint([faucet.address, 1_000_000n * 10n ** 18n]),
+      secondStocks.write.mint([faucet.address, 100_000_000n * 10n ** 18n]),
     );
   } else {
     const secondB20 = await viem.getContractAt("MockB20", artifact.tokens[second.underlying.symbol]!);
     await writeWithRetry("mint(faucet, second)", () =>
-      secondB20.write.mint([faucet.address, 1_000_000n * 10n ** 18n]),
+      secondB20.write.mint([faucet.address, 100_000_000n * 10n ** 18n]),
     );
   }
 

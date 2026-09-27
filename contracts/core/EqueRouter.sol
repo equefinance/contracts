@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -148,13 +148,16 @@ contract EqueRouter is EqueAccess, IEqueRouter {
 
         // Caps are enforced on the post-allocation holding, so the request is
         // clamped to what each strategy may still receive.
+        // Caps are upper bounds on new allocation, not forced moves: if a
+        // curator lowers one below current holdings, planning stops adding to
+        // that leg instead of underflowing.
         uint256 epochCap = Math.mulDiv(total, config.capBps[epochStrategy], 10_000);
         if (epochHeld + epochWant > epochCap) {
-            epochWant = epochCap - epochHeld;
+            epochWant = epochCap > epochHeld ? epochCap - epochHeld : 0;
         }
         uint256 lendingCap = Math.mulDiv(total, config.capBps[lendingStrategy], 10_000);
         if (lendingHeld + lendingWant > lendingCap) {
-            lendingWant = lendingCap - lendingHeld;
+            lendingWant = lendingCap > lendingHeld ? lendingCap - lendingHeld : 0;
         }
 
         uint256 budget = buffer;

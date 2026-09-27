@@ -12,8 +12,6 @@ import type { Deployed } from "./deploy.ts";
  * npx hardhat run --network hardhatMainnet scripts/deploy-and-smoke.ts
  */
 
-// One connection for the whole run: deploy writes to it and the smoke test
-// reads the same chain.
 const connection = await network.create();
 const { viem, networkHelpers } = connection;
 const publicClient = await viem.getPublicClient();

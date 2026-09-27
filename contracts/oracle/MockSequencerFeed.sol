@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
@@ -19,7 +19,7 @@ contract MockSequencerFeed is AggregatorV3Interface {
     constructor(address keeper_) {
         if (keeper_ == address(0)) revert Errors.ZeroAddress();
         keeper = keeper_;
-        _answer = 1;
+        _answer = 0; // up
         _updatedAt = block.timestamp;
     }
 
@@ -52,7 +52,7 @@ contract MockSequencerFeed is AggregatorV3Interface {
 
     function setUp(bool up) external {
         if (msg.sender != keeper) revert NotKeeper();
-        _answer = up ? int256(1) : int256(0);
+        _answer = up ? int256(0) : int256(1);
         _updatedAt = block.timestamp;
     }
 }

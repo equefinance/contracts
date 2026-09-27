@@ -82,6 +82,38 @@ contract EqueRouterTest is CoreFixture {
         router.rebalance(address(vault));
     }
 
+    function test_PlanAllocationSurvivesCapBelowHoldings() public {
+        setUpCore();
+        _deposit(depositor, 10 ether);
+        vm.prank(keeper);
+        vault.allocate(); // epoch holds 7, lending 3
+
+        // The curator lowers the epoch cap below what the strategy already
+        // holds and moves the target up; planning must refuse to add to that
+        // leg rather than underflow.
+        vm.prank(curator);
+        router.registerStrategy(address(vault), address(epochStrategy), 5_000);
+        vm.prank(curator);
+        router.setWeights(address(vault), 8_000, 2_000);
+
+        (, uint256[] memory amounts) = router.planAllocation(address(vault));
+        assertEq(amounts[0], 0);
+        assertEq(amounts[1], 0);
+    }
+
+    function test_RebalanceAtTargetReverts() public {
+        setUpCore();
+        _deposit(depositor, 10 ether);
+        vm.prank(keeper);
+        vault.allocate(); // lands exactly on 70/30
+
+        // The keeper cannot churn the book: a rebalance that would not move
+        // the vault toward its target must revert.
+        vm.prank(keeper);
+        vm.expectRevert(IEqueRouter.NothingToRebalance.selector);
+        router.rebalance(address(vault));
+    }
+
     function test_RebalanceRequiresKeeper() public {
         setUpCore();
         _deposit(depositor, 10 ether);

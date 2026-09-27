@@ -49,7 +49,8 @@ contract MockFeed is AggregatorV3Interface {
 }
 
 contract MockSequencer {
-    int256 public latestAnswer = 1;
+    // Chainlink convention: 0 = up, 1 = down.
+    int256 public latestAnswer = 0;
     uint256 public latestTimestamp;
 
     constructor() {
@@ -57,7 +58,7 @@ contract MockSequencer {
     }
 
     function update(bool up) external {
-        latestAnswer = up ? int256(1) : int256(0);
+        latestAnswer = up ? int256(0) : int256(1);
         latestTimestamp = block.timestamp;
     }
 
@@ -190,6 +191,17 @@ contract OracleGuardTest is Test {
         // price feed itself is now stale; refresh it to isolate the check
         priceFeed.updateAnswer(180_00000000);
         assertEq(_read(), 180 ether);
+    }
+
+    function test_SequencerDownRevertsPastGrace() public {
+        MockSequencer seq = new MockSequencer();
+        feed.checkSequencer = true;
+        feed.sequencerFeed = AggregatorV3Interface(address(seq));
+
+        seq.update(false); // 1 = down
+        vm.warp(block.timestamp + 2 hours);
+        vm.expectRevert(abi.encodeWithSelector(Errors.SequencerDown.selector));
+        this.readExternal();
     }
 
     function test_MarketHoursWeekdayOpen() public {

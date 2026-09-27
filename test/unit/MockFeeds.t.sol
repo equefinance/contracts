@@ -76,15 +76,16 @@ contract MockFeedsTest is Test {
     }
 
     function test_SequencerUpAndDown() public {
+        // Chainlink convention: 0 = up, 1 = down.
         MockSequencerFeed seq = new MockSequencerFeed(keeper);
         (, int256 up, uint256 updatedAt, , ) = seq.latestRoundData();
-        assertEq(up, 1);
+        assertEq(up, 0);
         assertEq(updatedAt, block.timestamp);
 
         vm.prank(keeper);
         seq.setUp(false);
         (, int256 down, , , ) = seq.latestRoundData();
-        assertEq(down, 0);
+        assertEq(down, 1);
     }
 
     function test_SequencerStrangerCannotUpdate() public {

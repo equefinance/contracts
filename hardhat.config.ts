@@ -87,14 +87,10 @@ export default defineConfig({
     84532: {
       name: "Base Sepolia",
       blockExplorers: {
-        etherscan: {
-          name: "BaseScan",
-          url: "https://sepolia.basescan.org",
-          apiUrl: "https://api-sepolia.basescan.org/api",
-        },
         blockscout: {
           name: "Base Sepolia Blockscout",
           url: "https://base-sepolia.blockscout.com",
+          apiUrl: "https://base-sepolia.blockscout.com/api",
         },
       },
     },
@@ -103,18 +99,15 @@ export default defineConfig({
       blockExplorers: {
         blockscout: {
           name: "Robinhood Chain Blockscout",
-          url: "https://robinhood-testnet.blockscout.com",
-          apiUrl: "https://robinhood-testnet.blockscout.com/api/v2",
+          url: "https://explorer.testnet.chain.robinhood.com",
+          apiUrl: "https://explorer.testnet.chain.robinhood.com/api",
         },
       },
     },
   },
   verify: {
-    etherscan: {
-      apiKey: configVariable("BASESCAN_API_KEY"),
-    },
-    blockscout: {
-      apiKey: configVariable("ROBINHOOD_EXPLORER_API_KEY"),
-    },
+    blockscout: { enabled: false },
+    etherscan: { enabled: false },
+    sourcify: { enabled: true },
   },
 });

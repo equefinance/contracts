@@ -2,18 +2,18 @@
   "chainId": 84532,
   "vaults": [
     {
-      "symbol": "eTSLA",
-      "shareTokenName": "Eque TSLA",
+      "symbol": "evTSLA",
+      "shareTokenName": "TSLA EqVault",
       "underlying": {
         "symbol": "TSLAc",
-        "name": "Tesla Inc. Tokenized Stock",
+        "name": "Tesla Inc.",
         "decimals": 18
       },
       "underlyingSource": "MockB20",
       "oracle": {
         "decimals": 8,
-        "initialPrice": "40000000000",
-        "heartbeatSec": 3600,
+        "initialPrice": "37800000000",
+        "heartbeatSec": 21600,
         "stalenessBufferSec": 300
       },
       "strikeBps": 10500,
@@ -34,18 +34,18 @@
       "lendingStrategy": "MockLendingStrategy"
     },
     {
-      "symbol": "eMETA",
-      "shareTokenName": "Eque META",
+      "symbol": "evMETA",
+      "shareTokenName": "META EqVault",
       "underlying": {
         "symbol": "METAc",
-        "name": "Meta Platforms Inc. Tokenized Stock",
+        "name": "Meta Platforms Inc.",
         "decimals": 18
       },
       "underlyingSource": "MockB20",
       "oracle": {
         "decimals": 8,
-        "initialPrice": "70000000000",
-        "heartbeatSec": 3600,
+        "initialPrice": "75900000000",
+        "heartbeatSec": 21600,
         "stalenessBufferSec": 300
       },
       "strikeBps": 10500,

@@ -173,6 +173,29 @@ contract EpochStrategyTest is Test {
         assertEq(strategy.currentEpoch().highBidder, bidder2);
     }
 
+    function test_EqualBidCannotDisplaceHighBidder() public {
+        _start();
+        _bid(bidder1, 0.12 ether);
+        // Ties never win: every bid must strictly clear the tick, so the
+        // earliest high bid stands until someone actually goes higher.
+        uint256 minNext = EpochMath.nextBidFloor(0.12 ether);
+        vm.prank(bidder2);
+        vm.expectRevert(abi.encodeWithSelector(IEpochStrategy.BidTooLow.selector, minNext, 0.12 ether));
+        strategy.bid(0.12 ether);
+        assertEq(strategy.currentEpoch().highBidder, bidder1);
+    }
+
+    function test_BackstopFloorBidClearsEpoch() public {
+        _start();
+        // The backstop bot bids exactly the reserve floor so every epoch
+        // clears; the floor is a qualifying bid, not a threshold above it.
+        _bid(bidder1, EpochMath.reserveFloor(strategy.currentEpoch().notional, FLOOR_BPS));
+        _close();
+        _settleAt(185_00000000);
+        assertEq(uint8(strategy.state()), uint8(IEpochStrategy.State.Settled));
+        assertEq(token.balanceOf(address(strategy)), 10.12 ether);
+    }
+
     function test_AntiSnipeExtendsWindow() public {
         _start();
         uint256 end = strategy.currentEpoch().auctionEnd;
